@@ -21,7 +21,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
 
-  const handleImageUpload = async (imageFile: File) => {
+  const handleImageCapture = async (imageFile: File) => {
     setIsLoading(true);
     setUploadedImage(URL.createObjectURL(imageFile));
     try {
@@ -91,19 +91,19 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
           <div className="space-y-6">
             <ImageUpload
-              onImageUpload={handleImageUpload}
+              onImageCapture={handleImageCapture}
               isLoading={isLoading}
             />
 
             {uploadedImage && (
               <div className="mt-6">
                 <h3 className="text-lg font-semibold text-green-400 mb-2">
-                  Uploaded Image:
+                  Captured/Uploaded Image:
                 </h3>
                 <div className="relative h-64 w-full">
                   <Image
                     src={uploadedImage}
-                    alt="Uploaded plant"
+                    alt="Captured/Uploaded plant"
                     layout="fill"
                     objectFit="cover"
                     className="rounded-lg"
@@ -127,7 +127,7 @@ export default function Home() {
               <div className="flex flex-col items-center justify-center h-full text-gray-400">
                 <Camera size={64} className="mb-4" />
                 <p className="text-xl font-semibold">
-                  Upload or capture an image to get started
+                  Capture or upload an image to get started
                 </p>
               </div>
             )}
@@ -142,7 +142,7 @@ export default function Home() {
             {[
               {
                 icon: <Camera className="w-8 h-8" />,
-                title: "Capture or Upload",
+                title: "Capture/Upload Image",
                 description:
                   "Take a photo or upload an image of the plant you want to identify",
               },
