@@ -3,15 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Camera,
-  Layers,
-  Grid,
-  Sliders,
-  Palette,
-  FileText,
-  Upload,
-} from "lucide-react";
+import { Camera, Layers, Grid, Sliders, Palette, FileText } from "lucide-react";
 import PlantInfo from "./components/PlantInfo";
 import ImageUpload from "./components/ImageUpload";
 
@@ -92,7 +84,8 @@ export default function Home() {
           Plant Identifier
         </h1>
         <p className="text-center text-gray-300 text-lg mb-8">
-          Upload an image of a plant and let our AI identify it for you!
+          Upload an image or capture a photo of a plant and let our AI identify
+          it for you!
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -132,9 +125,9 @@ export default function Home() {
               <PlantInfo info={plantInfo} />
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-gray-400">
-                <Upload size={64} className="mb-4" />
+                <Camera size={64} className="mb-4" />
                 <p className="text-xl font-semibold">
-                  Upload an image to get started
+                  Upload or capture an image to get started
                 </p>
               </div>
             )}
@@ -149,9 +142,9 @@ export default function Home() {
             {[
               {
                 icon: <Camera className="w-8 h-8" />,
-                title: "Upload Image",
+                title: "Capture or Upload",
                 description:
-                  "Take a clear photo of the plant you want to identify",
+                  "Take a photo or upload an image of the plant you want to identify",
               },
               {
                 icon: <Layers className="w-8 h-8" />,
