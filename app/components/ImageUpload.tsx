@@ -6,6 +6,8 @@ interface ImageUploadProps {
   isLoading: boolean;
 }
 
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
+
 export default function ImageUpload({
   onImageCapture,
   isLoading,
@@ -13,6 +15,62 @@ export default function ImageUpload({
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  const resizeImage = (file: File): Promise<File> => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+
+          // Calculate the width and height, constraining the proportions
+          if (width > height) {
+            if (width > 1000) {
+              height = Math.round((height * 1000) / width);
+              width = 1000;
+            }
+          } else {
+            if (height > 1000) {
+              width = Math.round((width * 1000) / height);
+              height = 1000;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d")!;
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const resizedFile = new File([blob], file.name, {
+                  type: "image/jpeg",
+                  lastModified: Date.now(),
+                });
+                resolve(resizedFile);
+              }
+            },
+            "image/jpeg",
+            0.7
+          ); // Adjust quality here (0.7 = 70% quality)
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const processFile = async (file: File) => {
+    let processedFile = file;
+    if (file.size > MAX_FILE_SIZE) {
+      processedFile = await resizeImage(file);
+    }
+    onImageCapture(processedFile);
+  };
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -24,19 +82,19 @@ export default function ImageUpload({
     }
   };
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      onImageCapture(e.dataTransfer.files[0]);
+      await processFile(e.dataTransfer.files[0]);
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
-      onImageCapture(e.target.files[0]);
+      await processFile(e.target.files[0]);
     }
   };
 
@@ -62,7 +120,9 @@ export default function ImageUpload({
             <span className="font-semibold">Click to upload</span> or drag and
             drop
           </p>
-          <p className="text-xs text-green-500">PNG, JPG or GIF (MAX. 10MB)</p>
+          <p className="text-xs text-green-500">
+            PNG, JPG or GIF (MAX. 1MB, will be resized if larger)
+          </p>
         </div>
         <input
           id="dropzone-file"

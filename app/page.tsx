@@ -86,6 +86,10 @@ export default function Home() {
         <p className="text-center text-gray-300 text-lg mb-8">
           Upload an image or capture a photo of a plant and let our AI identify
           it for you!
+          <br />
+          <span className="text-sm text-green-500">
+            (Max file size: 1MB. Larger images will be automatically resized.)
+          </span>
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
