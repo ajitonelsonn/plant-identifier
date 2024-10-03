@@ -3,39 +3,12 @@
 import React from "react";
 import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
+import Navigation from "../components/Navigation";
 
 export default function Contact() {
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      <nav className="bg-green-800 p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold">
-            Plant Identifier
-          </Link>
-          <ul className="flex space-x-4">
-            <li>
-              <Link href="/" className="hover:text-green-200">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/about" className="hover:text-green-200">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:text-green-200">
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link href="/gallery" className="hover:text-green-200">
-                Plant Gallery
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <Navigation />
 
       <main className="flex-grow container mx-auto p-8">
         <h1 className="text-4xl font-bold text-center text-green-400 mb-8">
@@ -54,11 +27,11 @@ export default function Contact() {
               </li>
               <li className="flex items-center">
                 <Phone className="w-6 h-6 text-green-400 mr-2" />
-                <span>(123) 456-7890</span>
+                <span>(+670) 456-7890</span>
               </li>
               <li className="flex items-center">
                 <MapPin className="w-6 h-6 text-green-400 mr-2" />
-                <span>123 Botany Lane, Green City, 12345</span>
+                <span>Dili, Timor-Leste</span>
               </li>
             </ul>
           </div>
