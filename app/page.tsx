@@ -3,7 +3,17 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { Camera, Layers, Grid, Sliders, Palette, FileText } from "lucide-react";
+import {
+  Camera,
+  Layers,
+  Grid,
+  Sliders,
+  Palette,
+  FileText,
+  Linkedin,
+  Facebook,
+  Github,
+} from "lucide-react";
 import PlantInfo from "./components/PlantInfo";
 import ImageUpload from "./components/ImageUpload";
 
@@ -81,15 +91,11 @@ export default function Home() {
 
       <main className="flex-grow container mx-auto p-4">
         <h1 className="text-5xl font-bold text-center text-green-400 mb-8">
-          Plant Identifier
+          Plant Identifier 🇹🇱
         </h1>
         <p className="text-center text-gray-300 text-lg mb-8">
           Upload an image or capture a photo of a plant and let our AI identify
           it for you!
-          <br />
-          <span className="text-sm text-green-500">
-            (Max file size: 1MB. Larger images will be automatically resized.)
-          </span>
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -196,6 +202,63 @@ export default function Home() {
             ))}
           </div>
         </section>
+        <section className="mb-12 bg-gray-800 p-6 rounded-lg">
+          <h2 className="text-3xl font-bold text-center text-green-400 mb-6">
+            About the Author
+          </h2>
+          <div className="flex flex-col items-center md:flex-row md:items-start space-y-4 md:space-y-0 md:space-x-6">
+            <div className="w-32 h-32 relative">
+              <Image
+                src="/ajito.jpg"
+                alt="Author Profile"
+                layout="fill"
+                objectFit="cover"
+                className="rounded-full"
+              />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-2xl font-semibold text-green-300 mb-2">
+                Ajito Nelson
+              </h3>
+              <p className="text-gray-300 mb-4">
+                Ajito Nelson is a dedicated Big Data Engineer and Machine
+                Learning enthusiast with expertise in handling complex datasets
+                and extracting actionable insights. Currently working at Viettel
+                Timor (TELEMOR), he is passionate about leveraging AI and Big
+                Data technologies to drive impactful decision-making. Ajito
+                continuously explores cutting-edge advancements in technology to
+                enhance his skills and contribute to the ever-evolving tech
+                landscape.
+              </p>
+              <div className="flex space-x-4">
+                <a
+                  href="https://www.facebook.com/kharu.kharu89"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300"
+                >
+                  <Facebook className="w-6 h-6" />
+                </a>
+                <a
+                  href="https://www.linkedin.com/in/ajitonelson"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300"
+                >
+                  <Linkedin className="w-6 h-6" />
+                </a>
+                <a
+                  href="https://github.com/ajitonelsonn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300"
+                >
+                  <Github className="w-6 h-6" />
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
 
       <footer className="bg-green-800 text-white p-8">
@@ -230,7 +293,7 @@ export default function Home() {
           <div>
             <h3 className="text-xl font-bold mb-2">Contact Us</h3>
             <p>Email: info@plantidentifier.com</p>
-            <p>Phone: (123) 456-7890</p>
+            <p>Phone: (+670) 456-7890</p>
           </div>
         </div>
         <div className="mt-8 text-center">
