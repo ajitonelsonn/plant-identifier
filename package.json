@@ -9,15 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "bcrypt": "^5.1.1",
+    "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.447.0",
     "next": "14.2.14",
+    "pg": "^8.13.0",
     "punycode": "^2.3.1",
     "react": "^18",
     "react-dom": "^18",
     "together-ai": "^0.6.0-alpha.4"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20.16.10",
+    "@types/pg": "^8.11.10",
     "@types/react": "^18.3.10",
     "@types/react-dom": "^18",
     "eslint": "^8",
