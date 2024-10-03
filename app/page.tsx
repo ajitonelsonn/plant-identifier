@@ -16,6 +16,8 @@ import {
 } from "lucide-react";
 import PlantInfo from "./components/PlantInfo";
 import ImageUpload from "./components/ImageUpload";
+import Footer from "./components/Footer";
+import Navigation from "./components/Navigation";
 
 interface PlantInfoData {
   name: string;
@@ -59,39 +61,11 @@ export default function Home() {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-900 text-white">
-      <nav className="bg-green-800 p-4">
-        <div className="container mx-auto flex justify-between items-center">
-          <Link href="/" className="text-2xl font-bold">
-            Plant Identifier
-          </Link>
-          <ul className="flex space-x-4">
-            <li>
-              <Link href="/" className="hover:text-green-200">
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link href="/about" className="hover:text-green-200">
-                About
-              </Link>
-            </li>
-            <li>
-              <Link href="/contact" className="hover:text-green-200">
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link href="/gallery" className="hover:text-green-200">
-                Plant Gallery
-              </Link>
-            </li>
-          </ul>
-        </div>
-      </nav>
+      <Navigation />
 
       <main className="flex-grow container mx-auto p-4">
         <h1 className="text-5xl font-bold text-center text-green-400 mb-8">
-          Plant Identifier 🇹🇱
+          Plant Identifier
         </h1>
         <p className="text-center text-gray-300 text-lg mb-8">
           Upload an image or capture a photo of a plant and let our AI identify
@@ -260,46 +234,7 @@ export default function Home() {
           </div>
         </section>
       </main>
-
-      <footer className="bg-green-800 text-white p-8">
-        <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
-            <h3 className="text-xl font-bold mb-2">About Us</h3>
-            <p>
-              Plant Identifier uses advanced AI technology to help you identify
-              and learn about various plant species quickly and accurately.
-            </p>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-2">Quick Links</h3>
-            <ul className="space-y-2">
-              <li>
-                <Link href="/privacy" className="hover:text-green-200">
-                  Privacy Policy
-                </Link>
-              </li>
-              <li>
-                <Link href="/terms" className="hover:text-green-200">
-                  Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link href="/faq" className="hover:text-green-200">
-                  FAQ
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h3 className="text-xl font-bold mb-2">Contact Us</h3>
-            <p>Email: info@plantidentifier.com</p>
-            <p>Phone: (+670) 456-7890</p>
-          </div>
-        </div>
-        <div className="mt-8 text-center">
-          <p>&copy; 2024 Plant Identifier. All rights reserved.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }
