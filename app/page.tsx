@@ -184,7 +184,7 @@ export default function Home() {
             <div className="w-32 h-32 relative">
               <Image
                 src="/ajito.jpg"
-                alt="Author Profile"
+                alt="ajito"
                 layout="fill"
                 objectFit="cover"
                 className="rounded-full"
