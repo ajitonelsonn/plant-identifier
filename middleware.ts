@@ -13,6 +13,14 @@ async function verifyToken(token: string) {
 }
 
 export async function middleware(request: NextRequest) {
+  // Allow direct access to files in the public directory
+  if (
+    request.nextUrl.pathname.startsWith("/_next") ||
+    request.nextUrl.pathname.includes(".")
+  ) {
+    return NextResponse.next();
+  }
+
   const token = request.cookies.get("token")?.value;
   console.log("Token in middleware:", token);
 
