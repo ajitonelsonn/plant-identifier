@@ -33,12 +33,13 @@ export default function Register() {
       <div className="bg-white rounded-xl shadow-xl overflow-hidden max-w-4xl w-full flex">
         <div className="w-1/2 relative">
           <Image
-            src="/plant-background-2.jpg"
+            src="/plant-background.jpg"
             alt="Plant background"
             fill
+            sizes="50vw"
             style={{ objectFit: "cover" }}
+            priority
           />
-
           <div className="absolute inset-0 bg-green-900 bg-opacity-70 flex flex-col justify-center items-center text-white p-8">
             <div className="text-4xl font-bold mb-4 flex items-center">
               PLANTIDEN
