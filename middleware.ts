@@ -12,24 +12,34 @@ async function verifyToken(token: string) {
   }
 }
 
+// List of allowed file extensions for static assets
+const ALLOWED_FILE_EXTENSIONS = [
+  ".jpg",
+  ".jpeg",
+  ".png",
+  ".gif",
+  ".svg",
+  ".ico",
+];
+
 export async function middleware(request: NextRequest) {
-  // Allow direct access to files in the public directory
+  const { pathname } = request.nextUrl;
+
+  // Allow access to specific static asset types without authentication
   if (
-    request.nextUrl.pathname.startsWith("/_next") ||
-    request.nextUrl.pathname.includes(".")
+    ALLOWED_FILE_EXTENSIONS.some((ext) => pathname.endsWith(ext)) ||
+    pathname.startsWith("/_next") ||
+    pathname === "/favicon.ico"
   ) {
+    return NextResponse.next();
+  }
+
+  // Public routes that don't require authentication
+  if (pathname === "/login" || pathname === "/register") {
     return NextResponse.next();
   }
 
   const token = request.cookies.get("token")?.value;
-  console.log("Token in middleware:", token);
-
-  if (
-    request.nextUrl.pathname === "/login" ||
-    request.nextUrl.pathname === "/register"
-  ) {
-    return NextResponse.next();
-  }
 
   if (!token) {
     return NextResponse.redirect(new URL("/login", request.url));
