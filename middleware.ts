@@ -12,25 +12,19 @@ async function verifyToken(token: string) {
   }
 }
 
-// List of allowed file extensions for static assets
-const ALLOWED_FILE_EXTENSIONS = [
-  ".jpg",
-  ".jpeg",
-  ".png",
-  ".gif",
-  ".svg",
-  ".ico",
-];
+// List of specific files allowed without authentication
+const ALLOWED_FILES = ["/plant-background.jpg"];
 
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Allow access to specific static asset types without authentication
-  if (
-    ALLOWED_FILE_EXTENSIONS.some((ext) => pathname.endsWith(ext)) ||
-    pathname.startsWith("/_next") ||
-    pathname === "/favicon.ico"
-  ) {
+  // Allow access to specific files without authentication
+  if (ALLOWED_FILES.includes(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Allow access to Next.js specific files
+  if (pathname.startsWith("/_next") || pathname === "/favicon.ico") {
     return NextResponse.next();
   }
 
