@@ -23,7 +23,7 @@ export async function POST(request: Request) {
           content: [
             {
               type: "text",
-              text: "Please identify this plant and provide the following information: name, scientific name, family, type, care level, and a brief description. Format the response as a simple text with each piece of information on a new line.",
+              text: "Please identify this plant and provide the following information: name, scientific name, family, type, care level, and a brief description. Also, provide detailed care tips including information about watering, light requirements, soil type, and any special care instructions. Format the response as a simple text with each piece of information on a new line.",
             },
             {
               type: "image_url",
@@ -35,7 +35,7 @@ export async function POST(request: Request) {
         },
       ],
       model: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",
-      max_tokens: 512,
+      max_tokens: 2048, // Increased to accommodate care tips
       temperature: 0.7,
       top_p: 0.7,
       top_k: 50,
@@ -85,6 +85,13 @@ export async function POST(request: Request) {
           .slice(1)
           .join(":")
           .trim() || "No description available",
+      careTips:
+        lines
+          .find((line) => line.toLowerCase().includes("care tips:"))
+          ?.split(":")
+          .slice(1)
+          .join(":")
+          .trim() || "No care tips available",
     };
 
     return NextResponse.json(plantInfo);

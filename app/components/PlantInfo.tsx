@@ -1,4 +1,6 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 
 interface PlantInfoProps {
   info: {
@@ -8,10 +10,43 @@ interface PlantInfoProps {
     type: string;
     careLevel: string;
     description: string;
+    careTips: string;
   };
 }
 
 export default function PlantInfo({ info }: PlantInfoProps) {
+  const [careTips, setCareTips] = useState<string>("");
+
+  useEffect(() => {
+    fetchCareTips();
+  }, [info]);
+
+  const fetchCareTips = async () => {
+    try {
+      const response = await fetch("/api/generate-care-tips", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          plantName: info.name,
+          careLevel: info.careLevel,
+          plantType: info.type,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch care tips");
+      }
+
+      const data = await response.json();
+      setCareTips(data.careTips);
+    } catch (error) {
+      console.error("Error fetching care tips:", error);
+      setCareTips("Unable to fetch care tips at this time.");
+    }
+  };
+
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
       <h2 className="text-3xl font-bold text-green-400 mb-4">
@@ -31,9 +66,7 @@ export default function PlantInfo({ info }: PlantInfoProps) {
       <div className="bg-green-900 rounded-lg p-4">
         <h3 className="text-xl font-semibold text-green-300 mb-2">Care Tips</h3>
         <p className="text-green-100">
-          Based on the {info.careLevel.toLowerCase()} care level, ensure you
-          provide appropriate light, water, and nutrients. Research specific
-          care instructions for the best results.
+          {info.careTips || "No care tips available."}
         </p>
       </div>
     </div>
