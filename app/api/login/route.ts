@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Pool } from "pg";
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
+import { SignJWT } from "jose";
 
 const pool = new Pool({
   user: process.env.DB_USER,
@@ -21,15 +21,18 @@ export async function POST(req: Request) {
     const user = result.rows[0];
 
     if (user && (await bcrypt.compare(password, user.password_hash))) {
-      const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET!, {
-        expiresIn: "1h",
-      });
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+      const token = await new SignJWT({ userId: user.id })
+        .setProtectedHeader({ alg: "HS256" })
+        .setExpirationTime("1h")
+        .sign(secret);
 
-      // Set the token in a HttpOnly cookie
       const response = NextResponse.json({ success: true });
       response.cookies.set("token", token, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 3600, // 1 hour
       });
 
       return response;
