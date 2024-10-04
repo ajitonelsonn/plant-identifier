@@ -10,7 +10,6 @@ interface PlantInfoProps {
     type: string;
     careLevel: string;
     description: string;
-    careTips: string;
   };
 }
 
@@ -65,9 +64,7 @@ export default function PlantInfo({ info }: PlantInfoProps) {
 
       <div className="bg-green-900 rounded-lg p-4">
         <h3 className="text-xl font-semibold text-green-300 mb-2">Care Tips</h3>
-        <p className="text-green-100">
-          {info.careTips || "No care tips available."}
-        </p>
+        <p className="text-green-100">{careTips || "Loading care tips..."}</p>
       </div>
     </div>
   );
