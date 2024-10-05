@@ -12,39 +12,24 @@ async function verifyToken(token: string) {
   }
 }
 
-// List of specific files allowed without authentication
-const ALLOWED_FILES = ["/plant-background.jpg"];
-
 export async function middleware(request: NextRequest) {
+  const token = request.cookies.get("token")?.value;
   const { pathname } = request.nextUrl;
 
-  // Allow access to specific files without authentication
-  if (ALLOWED_FILES.includes(pathname)) {
-    return NextResponse.next();
-  }
-
-  // Allow access to Next.js specific files
-  if (pathname.startsWith("/_next") || pathname === "/favicon.ico") {
-    return NextResponse.next();
-  }
-
-  // Public routes that don't require authentication
-  if (pathname === "/login" || pathname === "/register") {
-    return NextResponse.next();
-  }
-
-  const token = request.cookies.get("token")?.value;
-
+  // Allow access to all pages without authentication
   if (!token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.next();
   }
 
   try {
     await verifyToken(token);
     return NextResponse.next();
   } catch (error) {
-    console.log("Token verification failed, redirecting to login", error);
-    return NextResponse.redirect(new URL("/login", request.url));
+    console.log("Token verification failed", error);
+    // Instead of redirecting, we'll just clear the invalid token
+    const response = NextResponse.next();
+    response.cookies.delete("token");
+    return response;
   }
 }
 
