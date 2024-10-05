@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, X } from "lucide-react";
@@ -9,6 +9,21 @@ import { LinkProps } from "next/link";
 export default function Navigation() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
+
+  const checkAuthStatus = async () => {
+    try {
+      const response = await fetch("/api/check-auth");
+      setIsAuthenticated(response.ok);
+    } catch (error) {
+      console.error("Error checking auth status:", error);
+      setIsAuthenticated(false);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -16,6 +31,7 @@ export default function Navigation() {
         method: "POST",
       });
       if (response.ok) {
+        setIsAuthenticated(false);
         router.push("/login");
       } else {
         console.error("Logout failed");
@@ -23,6 +39,10 @@ export default function Navigation() {
     } catch (error) {
       console.error("Logout error:", error);
     }
+  };
+
+  const handleLogin = () => {
+    router.push("/login");
   };
 
   const toggleMenu = () => {
@@ -45,14 +65,23 @@ export default function Navigation() {
 
         {/* Desktop menu */}
         <ul className="hidden md:flex space-x-4 items-center">
-          <NavItems handleLogout={handleLogout} />
+          <NavItems
+            isAuthenticated={isAuthenticated}
+            handleLogout={handleLogout}
+            handleLogin={handleLogin}
+          />
         </ul>
       </div>
 
       {/* Mobile menu dropdown */}
       {isMenuOpen && (
         <ul className="md:hidden mt-4 space-y-2">
-          <NavItems handleLogout={handleLogout} mobile />
+          <NavItems
+            isAuthenticated={isAuthenticated}
+            handleLogout={handleLogout}
+            handleLogin={handleLogin}
+            mobile
+          />
         </ul>
       )}
     </nav>
@@ -60,12 +89,16 @@ export default function Navigation() {
 }
 
 interface NavItemsProps {
+  isAuthenticated: boolean;
   handleLogout: () => Promise<void>;
+  handleLogin: () => void;
   mobile?: boolean;
 }
 
 const NavItems: React.FC<NavItemsProps> = ({
+  isAuthenticated,
   handleLogout,
+  handleLogin,
   mobile = false,
 }) => (
   <>
@@ -74,12 +107,21 @@ const NavItems: React.FC<NavItemsProps> = ({
     <NavLink href="/contact" label="Contact" mobile={mobile} />
     <NavLink href="/gallery" label="Plant Gallery" mobile={mobile} />
     <li className={mobile ? "py-2" : ""}>
-      <button
-        onClick={handleLogout}
-        className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
-      >
-        Logout
-      </button>
+      {isAuthenticated ? (
+        <button
+          onClick={handleLogout}
+          className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+        >
+          Logout
+        </button>
+      ) : (
+        <button
+          onClick={handleLogin}
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+        >
+          Login
+        </button>
+      )}
     </li>
   </>
 );
