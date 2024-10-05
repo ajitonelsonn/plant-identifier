@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { LinkProps } from "next/link";
 
 export default function Navigation() {
@@ -106,6 +106,14 @@ const NavItems: React.FC<NavItemsProps> = ({
     <NavLink href="/about" label="About" mobile={mobile} />
     <NavLink href="/contact" label="Contact" mobile={mobile} />
     <NavLink href="/gallery" label="Plant Gallery" mobile={mobile} />
+    {isAuthenticated && (
+      <NavLink
+        href="/profile"
+        label="Profile"
+        mobile={mobile}
+        icon={<User size={16} />}
+      />
+    )}
     <li className={mobile ? "py-2" : ""}>
       {isAuthenticated ? (
         <button
@@ -130,11 +138,16 @@ interface NavLinkProps {
   href: LinkProps["href"];
   label: string;
   mobile: boolean;
+  icon?: React.ReactNode;
 }
 
-const NavLink: React.FC<NavLinkProps> = ({ href, label, mobile }) => (
+const NavLink: React.FC<NavLinkProps> = ({ href, label, mobile, icon }) => (
   <li className={mobile ? "py-2" : ""}>
-    <Link href={href} className="text-white hover:text-green-200">
+    <Link
+      href={href}
+      className="text-white hover:text-green-200 flex items-center"
+    >
+      {icon && <span className="mr-2">{icon}</span>}
       {label}
     </Link>
   </li>
