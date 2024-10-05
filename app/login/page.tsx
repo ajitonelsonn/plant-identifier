@@ -44,14 +44,19 @@ export default function Login() {
           />
           <div className="absolute inset-0 bg-green-900 bg-opacity-70 flex flex-col justify-center items-center text-white p-8">
             <div className="text-4xl font-bold mb-4 flex items-center">
-              PLANTIDEN
-              <svg
-                className="w-8 h-8 ml-2"
-                viewBox="0 0 24 24"
-                fill="currentColor"
+              <Link
+                href="/"
+                className="text-2xl font-bold text-white flex items-center hover:text-green-200 transition duration-300"
               >
-                <path d="M7,17.5C7,16.12 8.12,15 9.5,15C10.88,15 12,16.12 12,17.5C12,18.88 10.88,20 9.5,20C8.12,20 7,18.88 7,17.5M16.5,15C17.88,15 19,16.12 19,17.5C19,18.88 17.88,20 16.5,20C15.12,20 14,18.88 14,17.5C14,16.12 15.12,15 16.5,15M16.5,3C19.58,3 22,5.42 22,8.5C22,11.58 19.58,14 16.5,14C13.42,14 11,11.58 11,8.5C11,5.42 13.42,3 16.5,3M7.5,3C10.58,3 13,5.42 13,8.5C13,11.58 10.58,14 7.5,14C4.42,14 2,11.58 2,8.5C2,5.42 4.42,3 7.5,3Z" />
-              </svg>
+                <span className="mr-2">PLANTIDEN</span>
+                <svg
+                  className="w-8 h-8 ml-2"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
+                  <path d="M7,17.5C7,16.12 8.12,15 9.5,15C10.88,15 12,16.12 12,17.5C12,18.88 10.88,20 9.5,20C8.12,20 7,18.88 7,17.5M16.5,15C17.88,15 19,16.12 19,17.5C19,18.88 17.88,20 16.5,20C15.12,20 14,18.88 14,17.5C14,16.12 15.12,15 16.5,15M16.5,3C19.58,3 22,5.42 22,8.5C22,11.58 19.58,14 16.5,14C13.42,14 11,11.58 11,8.5C11,5.42 13.42,3 16.5,3M7.5,3C10.58,3 13,5.42 13,8.5C13,11.58 10.58,14 7.5,14C4.42,14 2,11.58 2,8.5C2,5.42 4.42,3 7.5,3Z" />
+                </svg>
+              </Link>
             </div>
             <p className="text-center text-sm">
               Identify and learn about plants with our AI-powered tool
