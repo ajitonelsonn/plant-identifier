@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Upload, Camera } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 interface ImageUploadProps {
   onImageCapture: (file: File) => void;
@@ -15,6 +16,22 @@ export default function ImageUpload({
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+
+  const checkAuthAndProceed = async (callback: () => void) => {
+    const response = await fetch("/api/check-auth");
+    if (response.ok) {
+      callback();
+    } else {
+      // Instead of redirecting, you might want to show a login modal or prompt
+      const shouldLogin = confirm(
+        "You need to be logged in to perform this action. Would you like to log in?"
+      );
+      if (shouldLogin) {
+        router.push("/login");
+      }
+    }
+  };
 
   const resizeImage = (file: File): Promise<File> => {
     return new Promise((resolve) => {
@@ -86,26 +103,35 @@ export default function ImageUpload({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      await processFile(e.dataTransfer.files[0]);
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      checkAuthAndProceed(() => processFile(files[0]));
     }
   };
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (e.target.files && e.target.files[0]) {
-      await processFile(e.target.files[0]);
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      checkAuthAndProceed(() => processFile(files[0]));
     }
   };
 
   const handleCameraCapture = () => {
-    cameraInputRef.current?.click();
+    checkAuthAndProceed(() => {
+      cameraInputRef.current?.click();
+    });
+  };
+
+  const handleFileUploadClick = () => {
+    checkAuthAndProceed(() => {
+      fileInputRef.current?.click();
+    });
   };
 
   return (
     <div className="space-y-4">
-      <label
-        htmlFor="dropzone-file"
+      <div
         className={`flex flex-col items-center justify-center w-full h-64 border-2 border-green-300 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition duration-300 ${
           dragActive ? "bg-gray-700" : ""
         }`}
@@ -113,6 +139,7 @@ export default function ImageUpload({
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
+        onClick={handleFileUploadClick}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
           <Upload className="w-10 h-10 mb-3 text-green-400" />
@@ -124,16 +151,16 @@ export default function ImageUpload({
             PNG, JPG or GIF (MAX. 1MB, will be resized if larger)
           </p>
         </div>
-        <input
-          id="dropzone-file"
-          type="file"
-          className="hidden"
-          onChange={handleChange}
-          ref={fileInputRef}
-          accept="image/*"
-          disabled={isLoading}
-        />
-      </label>
+      </div>
+      <input
+        id="dropzone-file"
+        type="file"
+        className="hidden"
+        onChange={handleChange}
+        ref={fileInputRef}
+        accept="image/*"
+        disabled={isLoading}
+      />
 
       <button
         onClick={handleCameraCapture}
