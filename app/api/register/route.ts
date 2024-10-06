@@ -11,7 +11,17 @@ const pool = new Pool({
 });
 
 export async function POST(req: Request) {
-  const { username, email, password } = await req.json();
+  const {
+    username,
+    email,
+    password,
+    firstName,
+    lastName,
+    displayName,
+    dateOfBirth,
+    gender,
+    location,
+  } = await req.json();
 
   try {
     // Check if user already exists
@@ -32,8 +42,21 @@ export async function POST(req: Request) {
 
     // Insert new user
     const result = await pool.query(
-      "INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id",
-      [username, email, passwordHash]
+      `INSERT INTO users (
+        username, email, password_hash, first_name, last_name, 
+        display_name, date_of_birth, gender, location
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+      [
+        username,
+        email,
+        passwordHash,
+        firstName,
+        lastName,
+        displayName,
+        dateOfBirth,
+        gender,
+        location,
+      ]
     );
 
     return NextResponse.json(
