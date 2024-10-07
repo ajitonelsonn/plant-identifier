@@ -6,10 +6,54 @@ import { useRouter } from "next/navigation";
 import { Menu, X, User } from "lucide-react";
 import { LinkProps } from "next/link";
 
+// Modal Component
+interface ModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+}
+
+const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      <div className="bg-green-500 rounded-lg p-6 max-w-sm w-full">
+        <h2 className="text-xl font-bold mb-4">{title}</h2>
+        <p className="mb-6">{message}</p>
+        <div className="flex justify-end space-x-4">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Navigation Component
 export default function Navigation() {
   const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
 
   useEffect(() => {
     checkAuthStatus();
@@ -26,13 +70,18 @@ export default function Navigation() {
   };
 
   const handleLogout = async () => {
+    setIsLogoutModalOpen(true);
+  };
+
+  const confirmLogout = async () => {
     try {
       const response = await fetch("/api/logout", {
         method: "POST",
       });
       if (response.ok) {
         setIsAuthenticated(false);
-        router.push("/login");
+        setIsLogoutModalOpen(false);
+        router.push("/");
       } else {
         console.error("Logout failed");
       }
@@ -84,6 +133,15 @@ export default function Navigation() {
           />
         </ul>
       )}
+
+      {/* Logout Confirmation Modal */}
+      <Modal
+        isOpen={isLogoutModalOpen}
+        onClose={() => setIsLogoutModalOpen(false)}
+        onConfirm={confirmLogout}
+        title="Confirm Logout"
+        message="Are you sure you want to log out?"
+      />
     </nav>
   );
 }
@@ -118,14 +176,14 @@ const NavItems: React.FC<NavItemsProps> = ({
       {isAuthenticated ? (
         <button
           onClick={handleLogout}
-          className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
         >
           Logout
         </button>
       ) : (
         <button
           onClick={handleLogin}
-          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+          className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
         >
           Login
         </button>
