@@ -2,18 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import {
-  Camera,
-  Layers,
-  Grid,
-  Sliders,
-  Palette,
-  FileText,
-  Linkedin,
-  Facebook,
-  Github,
-} from "lucide-react";
+import { Camera, Layers, Grid, Sliders, Palette, FileText } from "lucide-react";
 import PlantInfo from "./components/PlantInfo";
 import ImageUpload from "./components/ImageUpload";
 import Footer from "./components/Footer";

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { Info, Leaf, Users } from "lucide-react";
 import Navigation from "../components/Navigation";
 import { Linkedin, Facebook, Github } from "lucide-react";
