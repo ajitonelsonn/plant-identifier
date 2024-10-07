@@ -176,63 +176,6 @@ export default function Home() {
             ))}
           </div>
         </section>
-        <section className="mb-12 bg-gray-800 p-6 rounded-lg">
-          <h2 className="text-3xl font-bold text-center text-green-400 mb-6">
-            About the Author
-          </h2>
-          <div className="flex flex-col items-center md:flex-row md:items-start space-y-4 md:space-y-0 md:space-x-6">
-            <div className="w-32 h-32 relative">
-              <Image
-                src="/ajito.jpg"
-                alt="ajito"
-                layout="fill"
-                objectFit="cover"
-                className="rounded-full"
-              />
-            </div>
-            <div className="flex-1">
-              <h3 className="text-2xl font-semibold text-green-300 mb-2">
-                Ajito Nelson
-              </h3>
-              <p className="text-gray-300 mb-4">
-                Ajito Nelson is a dedicated Big Data Engineer and Machine
-                Learning enthusiast with expertise in handling complex datasets
-                and extracting actionable insights. Currently working at Viettel
-                Timor (TELEMOR), he is passionate about leveraging AI and Big
-                Data technologies to drive impactful decision-making. Ajito
-                continuously explores cutting-edge advancements in technology to
-                enhance his skills and contribute to the ever-evolving tech
-                landscape.
-              </p>
-              <div className="flex space-x-4">
-                <a
-                  href="https://www.facebook.com/kharu.kharu89"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300"
-                >
-                  <Facebook className="w-6 h-6" />
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/ajitonelson"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300"
-                >
-                  <Linkedin className="w-6 h-6" />
-                </a>
-                <a
-                  href="https://github.com/ajitonelsonn"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-400 hover:text-blue-300"
-                >
-                  <Github className="w-6 h-6" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
       <Footer />
     </div>
