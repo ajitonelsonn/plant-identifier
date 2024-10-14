@@ -1,16 +1,8 @@
 import { NextResponse } from "next/server";
 import Together from "together-ai";
-import { Pool } from "pg";
+import { pool } from "../../utils/db";
 
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
-
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || "5432"),
-});
 
 export async function POST(request: Request) {
   try {
