@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import { Camera, Layers, Grid, Sliders, Palette, FileText } from "lucide-react";
 import PlantInfo from "./components/PlantInfo";
