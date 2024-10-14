@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 interface ImageUploadProps {
   onImageCapture: (file: File) => void;
   isLoading: boolean;
+  isDisabled: boolean;
 }
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
@@ -12,6 +13,7 @@ const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
 export default function ImageUpload({
   onImageCapture,
   isLoading,
+  isDisabled,
 }: ImageUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -23,7 +25,6 @@ export default function ImageUpload({
     if (response.ok) {
       callback();
     } else {
-      // Instead of redirecting, you might want to show a login modal or prompt
       const shouldLogin = confirm(
         "You need to be logged in to perform this action. Would you like to log in?"
       );
@@ -43,7 +44,6 @@ export default function ImageUpload({
           let width = img.width;
           let height = img.height;
 
-          // Calculate the width and height, constraining the proportions
           if (width > height) {
             if (width > 1000) {
               height = Math.round((height * 1000) / width);
@@ -73,7 +73,7 @@ export default function ImageUpload({
             },
             "image/jpeg",
             0.7
-          ); // Adjust quality here (0.7 = 70% quality)
+          );
         };
         img.src = e.target?.result as string;
       };
@@ -103,30 +103,38 @@ export default function ImageUpload({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    const files = e.dataTransfer.files;
-    if (files && files.length > 0) {
-      checkAuthAndProceed(() => processFile(files[0]));
+    if (!isDisabled) {
+      const files = e.dataTransfer.files;
+      if (files && files.length > 0) {
+        checkAuthAndProceed(() => processFile(files[0]));
+      }
     }
   };
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      checkAuthAndProceed(() => processFile(files[0]));
+    if (!isDisabled) {
+      const files = e.target.files;
+      if (files && files.length > 0) {
+        checkAuthAndProceed(() => processFile(files[0]));
+      }
     }
   };
 
   const handleCameraCapture = () => {
-    checkAuthAndProceed(() => {
-      cameraInputRef.current?.click();
-    });
+    if (!isDisabled) {
+      checkAuthAndProceed(() => {
+        cameraInputRef.current?.click();
+      });
+    }
   };
 
   const handleFileUploadClick = () => {
-    checkAuthAndProceed(() => {
-      fileInputRef.current?.click();
-    });
+    if (!isDisabled) {
+      checkAuthAndProceed(() => {
+        fileInputRef.current?.click();
+      });
+    }
   };
 
   return (
@@ -134,11 +142,11 @@ export default function ImageUpload({
       <div
         className={`flex flex-col items-center justify-center w-full h-64 border-2 border-green-300 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition duration-300 ${
           dragActive ? "bg-gray-700" : ""
-        }`}
-        onDragEnter={handleDrag}
-        onDragLeave={handleDrag}
-        onDragOver={handleDrag}
-        onDrop={handleDrop}
+        } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+        onDragEnter={isDisabled ? undefined : handleDrag}
+        onDragLeave={isDisabled ? undefined : handleDrag}
+        onDragOver={isDisabled ? undefined : handleDrag}
+        onDrop={isDisabled ? undefined : handleDrop}
         onClick={handleFileUploadClick}
       >
         <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -157,13 +165,15 @@ export default function ImageUpload({
         onChange={handleChange}
         ref={fileInputRef}
         accept="image/*"
-        disabled={isLoading}
+        disabled={isLoading || isDisabled}
       />
 
       <button
         onClick={handleCameraCapture}
-        className="w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center"
-        disabled={isLoading}
+        className={`w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center ${
+          isDisabled ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        disabled={isLoading || isDisabled}
       >
         <Camera className="w-5 h-5 mr-2" />
         Capture from Camera
@@ -176,7 +186,7 @@ export default function ImageUpload({
         className="hidden"
         ref={cameraInputRef}
         onChange={handleChange}
-        disabled={isLoading}
+        disabled={isLoading || isDisabled}
       />
     </div>
   );

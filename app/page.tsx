@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Camera, Layers, Grid, Sliders, Palette, FileText } from "lucide-react";
+import { useRouter } from "next/navigation";
 import PlantInfo from "./components/PlantInfo";
 import ImageUpload from "./components/ImageUpload";
 import Footer from "./components/Footer";
@@ -18,22 +19,54 @@ interface PlantInfoData {
   description: string;
 }
 
+interface UserData {
+  id: string;
+  username: string;
+}
+
 export default function Home() {
   const [plantInfo, setPlantInfo] = useState<PlantInfoData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [user, setUser] = useState<UserData | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch("/api/check-auth");
+        if (response.ok) {
+          const userData = await response.json();
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        setUser(null);
+      }
+    };
+
+    checkAuth();
+  }, []);
 
   const handleImageCapture = async (imageFile: File) => {
+    if (!user) {
+      console.error("User not authenticated");
+      router.push("/login");
+      return;
+    }
+
     setIsLoading(true);
     setUploadedImage(URL.createObjectURL(imageFile));
     try {
       const formData = new FormData();
       formData.append("image", imageFile);
+      formData.append("userId", user.id);
 
       const response = await fetch("/api/identify-plant", {
         method: "POST",
         body: formData,
-        credentials: "include",
       });
 
       if (!response.ok) {
@@ -59,8 +92,9 @@ export default function Home() {
           Plant Identifier
         </h1>
         <p className="text-center text-gray-300 text-lg mb-8">
-          Upload an image or capture a photo of a plant and let our AI identify
-          it for you!
+          {user
+            ? `Welcome, ${user.username}! Upload an image or capture a photo of a plant and let our AI identify it for you!`
+            : "Welcome! Log in to upload an image and identify plants."}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
@@ -68,6 +102,7 @@ export default function Home() {
             <ImageUpload
               onImageCapture={handleImageCapture}
               isLoading={isLoading}
+              isDisabled={!user}
             />
 
             {uploadedImage && (
@@ -101,8 +136,10 @@ export default function Home() {
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-gray-400">
                 <Camera size={64} className="mb-4" />
-                <p className="text-xl font-semibold text-center">
-                  Capture or upload an image to get started
+                <p className="text-xl font-semibold">
+                  {user
+                    ? "Capture or upload an image to get started"
+                    : "Log in to capture or upload an image and identify plants"}
                 </p>
               </div>
             )}
