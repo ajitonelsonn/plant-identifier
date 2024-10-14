@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -52,9 +52,9 @@ interface UserProfile {
 
 interface PlantIdentification {
   id: number;
-  plantName: string;
-  scientificName: string;
-  identifiedAt: string;
+  plant_name: string;
+  scientific_name: string;
+  identified_at: string;
 }
 
 export default function Profile() {
@@ -65,12 +65,7 @@ export default function Profile() {
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 
-  useEffect(() => {
-    fetchProfile();
-    fetchPlantIdentifications();
-  }, []);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetch("/api/profile");
@@ -85,7 +80,12 @@ export default function Profile() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    fetchProfile();
+    fetchPlantIdentifications();
+  }, [fetchProfile]);
 
   const fetchPlantIdentifications = async () => {
     try {
@@ -94,14 +94,16 @@ export default function Profile() {
         const data: PlantIdentification[] = await response.json();
         console.log("Fetched plant identifications:", data);
         setPlantIdentifications(
-          data.slice(-6).map((plant: any) => ({
+          data.slice(-6).map((plant: PlantIdentification) => ({
             id: plant.id,
-            plantName:
+            plant_name:
               plant.plant_name?.replace(/\*\*/g, "").trim() || "Unknown Plant",
-            scientificName:
+            scientific_name:
               plant.scientific_name?.replace(/\*\*/g, "").trim() ||
               "Scientific name not available",
-            identifiedAt: plant.identified_at || "Date not available",
+            identified_at: plant.identified_at
+              ? new Date(plant.identified_at).toLocaleDateString()
+              : "Date not available",
           }))
         );
       } else {
@@ -131,7 +133,7 @@ export default function Profile() {
       new Set(
         plantIdentifications.map(
           (plant) =>
-            plant.plantName?.replace(/\*\*/g, "").trim() || "Unknown Plant"
+            plant.plant_name?.replace(/\*\*/g, "").trim() || "Unknown Plant"
         )
       )
     ),
@@ -142,14 +144,14 @@ export default function Profile() {
           new Set(
             plantIdentifications.map(
               (plant) =>
-                plant.plantName?.replace(/\*\*/g, "").trim() || "Unknown Plant"
+                plant.plant_name?.replace(/\*\*/g, "").trim() || "Unknown Plant"
             )
           )
         ).map(
           (name) =>
             plantIdentifications.filter(
               (plant) =>
-                (plant.plantName?.replace(/\*\*/g, "").trim() ||
+                (plant.plant_name?.replace(/\*\*/g, "").trim() ||
                   "Unknown Plant") === name
             ).length
         ),
@@ -274,17 +276,17 @@ export default function Profile() {
                       <div className="flex items-center mb-2">
                         <Leaf className="text-green-500 mr-2" size={20} />
                         <h3 className="text-lg font-semibold text-gray-800">
-                          {plant.plantName || "Unknown Plant"}
+                          {plant.plant_name || "Unknown Plant"}
                         </h3>
                       </div>
                       <p className="text-sm text-gray-600 mb-1">
-                        {plant.scientificName ||
+                        {plant.scientific_name ||
                           "Scientific name not available"}
                       </p>
                       <p className="text-xs text-gray-500">
                         Identified on:{" "}
-                        {plant.identifiedAt
-                          ? new Date(plant.identifiedAt).toLocaleDateString()
+                        {plant.identified_at
+                          ? new Date(plant.identified_at).toLocaleDateString()
                           : "Date not available"}
                       </p>
                     </div>
@@ -293,7 +295,7 @@ export default function Profile() {
               </>
             ) : (
               <p className="text-gray-600">
-                You haven't identified any plants yet.
+                You haven&apos;t identified any plants yet.
               </p>
             )}
           </div>

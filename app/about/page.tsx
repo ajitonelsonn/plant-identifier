@@ -61,9 +61,9 @@ export default function About() {
             </p>
             <p className="text-gray-300">
               Our goal is to make plant identification easier for everyone,
-              whether you're a nature enthusiast, a beginner, or simply someone
-              who enjoys discovering the beauty of plants. Join us in exploring
-              and deepening our connection with the natural world!
+              whether you&apos;re a nature enthusiast, a beginner, or simply
+              someone who enjoys discovering the beauty of plants. Join us in
+              exploring and deepening our connection with the natural world!
             </p>
           </div>
         </section>

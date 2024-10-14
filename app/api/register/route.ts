@@ -33,7 +33,7 @@ export async function POST(req: Request) {
     const passwordHash = await bcrypt.hash(password, saltRounds);
 
     // Insert new user
-    const result = await pool.query(
+    await pool.query(
       `INSERT INTO users (
         username, email, password_hash, first_name, last_name, 
         display_name, date_of_birth, gender, location

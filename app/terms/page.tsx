@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import Navigation from "../components/Navigation";
 
 export default function TermsOfService() {
@@ -53,9 +52,9 @@ export default function TermsOfService() {
               4. Disclaimer of Warranties
             </h2>
             <p className="text-gray-300">
-              Plant Identifier is provided "as is" without any warranties,
-              expressed or implied. We do not guarantee the accuracy of plant
-              identifications.
+              Plant Identifier is provided &quot;as is&quot; without any
+              warranties, expressed or implied. We do not guarantee the accuracy
+              of plant identifications.
             </p>
           </section>
 

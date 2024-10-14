@@ -63,7 +63,7 @@ export default function Register() {
           type: "error",
         });
       }
-    } catch (error) {
+    } catch {
       setModalInfo({
         isOpen: true,
         title: "Error",

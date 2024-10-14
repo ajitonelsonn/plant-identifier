@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
 import { pool } from "../../utils/db";
@@ -15,7 +15,7 @@ async function getUserIdFromToken(token: string): Promise<number | null> {
   }
 }
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   const cookieStore = cookies();
   const token = cookieStore.get("token");
 
@@ -42,10 +42,17 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json(result.rows);
-  } catch (error: any) {
-    console.error("Failed to fetch plant identifications:", error);
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      console.error("Failed to fetch plant identifications:", error);
+      return NextResponse.json(
+        { error: "Invalid token or database error", details: error.message },
+        { status: 500 }
+      );
+    }
+
     return NextResponse.json(
-      { error: "Invalid token or database error", details: error.message },
+      { error: "Unknown error occurred" },
       { status: 500 }
     );
   }

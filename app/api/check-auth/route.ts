@@ -1,5 +1,3 @@
-// app/api/check-auth/route.ts
-
 import { NextResponse } from "next/server";
 import { cookies } from "next/headers";
 import { jwtVerify } from "jose";
@@ -16,7 +14,7 @@ export async function GET() {
     const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
     await jwtVerify(token.value, secret);
     return NextResponse.json({ isAuthenticated: true });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ isAuthenticated: false }, { status: 401 });
   }
 }

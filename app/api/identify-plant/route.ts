@@ -22,18 +22,12 @@ export async function POST(request: Request) {
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: "Please identify this plant and provide the following information: name, scientific name, family, type, care level, and a brief description. Format the response as a simple text with each piece of information on a new line.",
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`,
-              },
-            },
-          ] as any, // Temporary type assertion
+          content:
+            "Please identify this plant and provide the following information: name, scientific name, family, type, care level, and a brief description. Format the response as a simple text with each piece of information on a new line.",
+        },
+        {
+          role: "user",
+          content: `data:image/jpeg;base64,${base64Image}`,
         },
       ],
       model: "meta-llama/Llama-3.2-11B-Vision-Instruct-Turbo",

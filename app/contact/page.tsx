@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 import { Mail, Phone, MapPin } from "lucide-react";
 import Navigation from "../components/Navigation";
 

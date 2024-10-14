@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 
 interface PlantInfoProps {
   info: {
@@ -16,11 +16,7 @@ interface PlantInfoProps {
 export default function PlantInfo({ info }: PlantInfoProps) {
   const [careTips, setCareTips] = useState<string>("");
 
-  useEffect(() => {
-    fetchCareTips();
-  }, [info]);
-
-  const fetchCareTips = async () => {
+  const fetchCareTips = useCallback(async () => {
     try {
       const response = await fetch("/api/generate-care-tips", {
         method: "POST",
@@ -44,7 +40,11 @@ export default function PlantInfo({ info }: PlantInfoProps) {
       console.error("Error fetching care tips:", error);
       setCareTips("Unable to fetch care tips at this time.");
     }
-  };
+  }, [info]);
+
+  useEffect(() => {
+    fetchCareTips();
+  }, [fetchCareTips]);
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 shadow-lg">
