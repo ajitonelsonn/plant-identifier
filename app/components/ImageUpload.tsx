@@ -147,9 +147,7 @@ export default function ImageUpload({
             <span className="font-semibold">Click to upload</span> or drag and
             drop
           </p>
-          <p className="text-xs text-green-500">
-            PNG, JPG or GIF (MAX. 1MB, will be resized if larger)
-          </p>
+          <p className="text-xs text-green-500">PNG, JPG or GIF</p>
         </div>
       </div>
       <input
