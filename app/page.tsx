@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { Camera, Layers, Grid, Sliders, Palette, FileText } from "lucide-react";
 import PlantInfo from "./components/PlantInfo";
@@ -29,12 +29,11 @@ export default function Home() {
     try {
       const formData = new FormData();
       formData.append("image", imageFile);
-      // TODO: Replace with actual user ID from your authentication system
-      formData.append("userId", "1");
 
       const response = await fetch("/api/identify-plant", {
         method: "POST",
         body: formData,
+        credentials: "include",
       });
 
       if (!response.ok) {
@@ -102,7 +101,7 @@ export default function Home() {
             ) : (
               <div className="flex flex-col items-center justify-center h-full text-gray-400">
                 <Camera size={64} className="mb-4" />
-                <p className="text-xl font-semibold">
+                <p className="text-xl font-semibold text-center">
                   Capture or upload an image to get started
                 </p>
               </div>
