@@ -1,15 +1,7 @@
 import { NextResponse } from "next/server";
-import { Pool } from "pg";
 import bcrypt from "bcrypt";
 import { SignJWT } from "jose";
-
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || "5432"),
-});
+import { pool } from "../../utils/db";
 
 export async function POST(req: Request) {
   const { username, password } = await req.json();
