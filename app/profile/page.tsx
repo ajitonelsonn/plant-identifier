@@ -59,7 +59,10 @@ interface PlantIdentification {
 
 export default function Profile() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [plantIdentifications, setPlantIdentifications] = useState<
+  const [allPlantIdentifications, setAllPlantIdentifications] = useState<
+    PlantIdentification[]
+  >([]);
+  const [recentPlantIdentifications, setRecentPlantIdentifications] = useState<
     PlantIdentification[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -82,28 +85,30 @@ export default function Profile() {
     }
   }, [router]);
 
-  useEffect(() => {
-    fetchProfile();
-    fetchPlantIdentifications();
-  }, [fetchProfile]);
-
   const fetchPlantIdentifications = async () => {
     try {
       const response = await fetch("/api/plant-identifications");
       if (response.ok) {
         const data: PlantIdentification[] = await response.json();
         console.log("Fetched plant identifications:", data);
-        setPlantIdentifications(
+
+        // Process all identifications for the chart
+        setAllPlantIdentifications(
+          data.map((plant: PlantIdentification) => ({
+            id: plant.id,
+            plant_name: plant.plant_name || "Unknown",
+            scientific_name: plant.scientific_name || "Unknown",
+            identified_at: new Date(plant.identified_at).toLocaleDateString(),
+          }))
+        );
+
+        // Set only the last 6 for display in cards
+        setRecentPlantIdentifications(
           data.slice(-6).map((plant: PlantIdentification) => ({
             id: plant.id,
-            plant_name:
-              plant.plant_name?.replace(/\*\*/g, "").trim() || "Unknown Plant",
-            scientific_name:
-              plant.scientific_name?.replace(/\*\*/g, "").trim() ||
-              "Scientific name not available",
-            identified_at: plant.identified_at
-              ? new Date(plant.identified_at).toLocaleDateString()
-              : "Date not available",
+            plant_name: plant.plant_name || "Unknown",
+            scientific_name: plant.scientific_name || "Unknown",
+            identified_at: new Date(plant.identified_at).toLocaleDateString(),
           }))
         );
       } else {
@@ -113,6 +118,11 @@ export default function Profile() {
       console.error("Error fetching plant identifications:", error);
     }
   };
+
+  useEffect(() => {
+    fetchProfile();
+    fetchPlantIdentifications();
+  }, [fetchProfile]);
 
   if (isLoading) {
     return (
@@ -130,30 +140,17 @@ export default function Profile() {
 
   const chartData = {
     labels: Array.from(
-      new Set(
-        plantIdentifications.map(
-          (plant) =>
-            plant.plant_name?.replace(/\*\*/g, "").trim() || "Unknown Plant"
-        )
-      )
+      new Set(allPlantIdentifications.map((plant) => plant.plant_name))
     ),
     datasets: [
       {
         label: "Number of Identifications per Plant",
         data: Array.from(
-          new Set(
-            plantIdentifications.map(
-              (plant) =>
-                plant.plant_name?.replace(/\*\*/g, "").trim() || "Unknown Plant"
-            )
-          )
+          new Set(allPlantIdentifications.map((plant) => plant.plant_name))
         ).map(
           (name) =>
-            plantIdentifications.filter(
-              (plant) =>
-                (plant.plant_name?.replace(/\*\*/g, "").trim() ||
-                  "Unknown Plant") === name
-            ).length
+            allPlantIdentifications.filter((plant) => plant.plant_name === name)
+              .length
         ),
         backgroundColor: "rgba(34, 197, 94, 0.5)",
         borderColor: "rgba(34, 197, 94, 1)",
@@ -265,29 +262,28 @@ export default function Profile() {
             <h2 className="text-2xl font-bold text-gray-800 mb-4">
               Your Plant Identifications Dashboard
             </h2>
-            {plantIdentifications.length > 0 ? (
+            {allPlantIdentifications.length > 0 ? (
               <>
                 <div className="mb-8">
                   <Bar data={chartData} options={chartOptions} />
                 </div>
+                <h3 className="text-xl font-semibold text-gray-800 mb-4">
+                  Your Last 6 Plant Detections
+                </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {plantIdentifications.map((plant) => (
+                  {recentPlantIdentifications.map((plant) => (
                     <div key={plant.id} className="bg-green-50 rounded-lg p-4">
                       <div className="flex items-center mb-2">
                         <Leaf className="text-green-500 mr-2" size={20} />
                         <h3 className="text-lg font-semibold text-gray-800">
-                          {plant.plant_name || "Unknown Plant"}
+                          {plant.plant_name}
                         </h3>
                       </div>
                       <p className="text-sm text-gray-600 mb-1">
-                        {plant.scientific_name ||
-                          "Scientific name not available"}
+                        {plant.scientific_name}
                       </p>
                       <p className="text-xs text-gray-500">
-                        Identified on:{" "}
-                        {plant.identified_at
-                          ? new Date(plant.identified_at).toLocaleDateString()
-                          : "Date not available"}
+                        Identified on: {plant.identified_at}
                       </p>
                     </div>
                   ))}
