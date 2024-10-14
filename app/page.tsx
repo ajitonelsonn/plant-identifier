@@ -9,6 +9,7 @@ import Footer from "./components/Footer";
 import Navigation from "./components/Navigation";
 
 interface PlantInfoData {
+  id: number;
   name: string;
   scientificName: string;
   family: string;
@@ -28,6 +29,8 @@ export default function Home() {
     try {
       const formData = new FormData();
       formData.append("image", imageFile);
+      // TODO: Replace with actual user ID from your authentication system
+      formData.append("userId", "1");
 
       const response = await fetch("/api/identify-plant", {
         method: "POST",
@@ -77,8 +80,8 @@ export default function Home() {
                   <Image
                     src={uploadedImage}
                     alt="Captured/Uploaded plant"
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    style={{ objectFit: "cover" }}
                     className="rounded-lg"
                   />
                 </div>
