@@ -1,5 +1,3 @@
-// app/register/page.tsx
-
 "use client";
 
 import React, { useState } from "react";
@@ -85,7 +83,16 @@ export default function Register() {
         const response = await fetch("/api/register", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...formData, otp }),
+          body: JSON.stringify({
+            ...formData,
+            firstName: formData.firstName || null,
+            lastName: formData.lastName || null,
+            displayName: formData.displayName || null,
+            dateOfBirth: formData.dateOfBirth || null,
+            gender: formData.gender || null,
+            location: formData.location || null,
+            otp,
+          }),
         });
 
         const data = await response.json();
@@ -138,7 +145,7 @@ export default function Register() {
                       type="text"
                       required
                       className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                      placeholder="Username"
+                      placeholder="Username (required)"
                       value={formData.username}
                       onChange={handleChange}
                     />
@@ -151,7 +158,7 @@ export default function Register() {
                       autoComplete="email"
                       required
                       className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                      placeholder="Email address"
+                      placeholder="Email address (required)"
                       value={formData.email}
                       onChange={handleChange}
                     />
@@ -164,7 +171,7 @@ export default function Register() {
                       autoComplete="new-password"
                       required
                       className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                      placeholder="Password"
+                      placeholder="Password (required)"
                       value={formData.password}
                       onChange={handleChange}
                     />
@@ -175,7 +182,7 @@ export default function Register() {
                       name="firstName"
                       type="text"
                       className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                      placeholder="First Name"
+                      placeholder="First Name (optional)"
                       value={formData.firstName}
                       onChange={handleChange}
                     />
@@ -186,7 +193,7 @@ export default function Register() {
                       name="lastName"
                       type="text"
                       className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                      placeholder="Last Name"
+                      placeholder="Last Name (optional)"
                       value={formData.lastName}
                       onChange={handleChange}
                     />
@@ -197,7 +204,7 @@ export default function Register() {
                       name="displayName"
                       type="text"
                       className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                      placeholder="Display Name"
+                      placeholder="Display Name (optional)"
                       value={formData.displayName}
                       onChange={handleChange}
                     />
@@ -211,7 +218,7 @@ export default function Register() {
                       name="dateOfBirth"
                       type="date"
                       className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                      placeholder="Date of Birth"
+                      placeholder="Date of Birth (optional)"
                       value={formData.dateOfBirth}
                       onChange={handleChange}
                     />
@@ -224,7 +231,7 @@ export default function Register() {
                       value={formData.gender}
                       onChange={handleChange}
                     >
-                      <option value="">Select Gender</option>
+                      <option value="">Select Gender (optional)</option>
                       <option value="male">Male</option>
                       <option value="female">Female</option>
                       <option value="other">Other</option>
@@ -239,7 +246,7 @@ export default function Register() {
                       name="location"
                       type="text"
                       className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                      placeholder="Location"
+                      placeholder="Location (optional)"
                       value={formData.location}
                       onChange={handleChange}
                     />
