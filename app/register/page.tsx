@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import Modal from "../components/Modal";
+import { Leaf, Mail, Lock, User, MapPin, Calendar, Users } from "lucide-react";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -81,7 +82,7 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-screen flex bg-green-50">
+    <div className="min-h-screen flex bg-gradient-to-br from-green-50 to-green-100">
       <Modal
         isOpen={modalInfo.isOpen}
         onClose={closeModal}
@@ -91,92 +92,104 @@ export default function Register() {
       />
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
-          <h2 className="text-3xl font-extrabold text-gray-900">Sign Up</h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Create your Planto account
-          </p>
+          <div className="text-center mb-8">
+            <Leaf className="mx-auto h-12 w-auto text-green-600" />
+            <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
+              Create Your PLANTIDEN Account
+            </h2>
+            <p className="mt-2 text-sm text-gray-600">
+              Join our community of plant enthusiasts
+            </p>
+          </div>
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-            <input type="hidden" name="remember" defaultValue="true" />
             <div className="rounded-md shadow-sm -space-y-px">
-              <div>
+              <div className="flex items-center border border-gray-300 rounded-t-md">
+                <User className="absolute ml-3 text-gray-400" size={18} />
                 <input
                   name="username"
                   type="text"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                   placeholder="Username"
                   value={formData.username}
                   onChange={handleChange}
                 />
               </div>
-              <div>
+              <div className="flex items-center border border-gray-300">
+                <Mail className="absolute ml-3 text-gray-400" size={18} />
                 <input
                   name="email"
                   type="email"
                   autoComplete="email"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                   placeholder="Email address"
                   value={formData.email}
                   onChange={handleChange}
                 />
               </div>
-              <div>
+              <div className="flex items-center border border-gray-300">
+                <Lock className="absolute ml-3 text-gray-400" size={18} />
                 <input
                   name="password"
                   type="password"
                   autoComplete="new-password"
                   required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                   placeholder="Password"
                   value={formData.password}
                   onChange={handleChange}
                 />
               </div>
-              <div>
+              <div className="flex items-center border border-gray-300">
+                <User className="absolute ml-3 text-gray-400" size={18} />
                 <input
                   name="firstName"
                   type="text"
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                   placeholder="First Name"
                   value={formData.firstName}
                   onChange={handleChange}
                 />
               </div>
-              <div>
+              <div className="flex items-center border border-gray-300">
+                <User className="absolute ml-3 text-gray-400" size={18} />
                 <input
                   name="lastName"
                   type="text"
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                   placeholder="Last Name"
                   value={formData.lastName}
                   onChange={handleChange}
                 />
               </div>
-              <div>
+              <div className="flex items-center border border-gray-300">
+                <User className="absolute ml-3 text-gray-400" size={18} />
                 <input
                   name="displayName"
                   type="text"
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                   placeholder="Display Name"
                   value={formData.displayName}
                   onChange={handleChange}
                 />
               </div>
-              <div>
+              <div className="flex items-center border border-gray-300">
+                <Calendar className="absolute ml-3 text-gray-400" size={18} />
                 <input
                   name="dateOfBirth"
                   type="date"
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                   placeholder="Date of Birth"
                   value={formData.dateOfBirth}
                   onChange={handleChange}
                 />
               </div>
-              <div>
+              <div className="flex items-center border border-gray-300">
+                <Users className="absolute ml-3 text-gray-400" size={18} />
                 <select
                   name="gender"
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                   value={formData.gender}
                   onChange={handleChange}
                 >
@@ -187,11 +200,12 @@ export default function Register() {
                   <option value="prefer_not_to_say">Prefer not to say</option>
                 </select>
               </div>
-              <div>
+              <div className="flex items-center border border-gray-300 rounded-b-md">
+                <MapPin className="absolute ml-3 text-gray-400" size={18} />
                 <input
                   name="location"
                   type="text"
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
                   placeholder="Location"
                   value={formData.location}
                   onChange={handleChange}
@@ -202,8 +216,14 @@ export default function Register() {
             <div>
               <button
                 type="submit"
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out"
               >
+                <span className="absolute left-0 inset-y-0 flex items-center pl-3">
+                  <Leaf
+                    className="h-5 w-5 text-green-500 group-hover:text-green-400"
+                    aria-hidden="true"
+                  />
+                </span>
                 Sign Up
               </button>
             </div>
@@ -212,7 +232,7 @@ export default function Register() {
             Already have an account?{" "}
             <Link
               href="/login"
-              className="font-medium text-green-600 hover:text-green-500"
+              className="font-medium text-green-600 hover:text-green-500 transition duration-150 ease-in-out"
             >
               Log in here
             </Link>
@@ -226,12 +246,26 @@ export default function Register() {
           alt="Plant background"
           layout="fill"
         />
-        <div className="absolute inset-0 bg-green-700 bg-opacity-75 flex flex-col justify-center items-center text-white p-8">
-          <h1 className="text-4xl font-bold mb-4">PLANTIDEN</h1>
-          <p className="text-center text-lg">
-            Join our community of plant enthusiasts and start identifying plants
-            today!
+        <div className="absolute inset-0 bg-gradient-to-br from-green-600 to-green-800 opacity-75 flex flex-col justify-center items-center text-white p-8">
+          <h1 className="text-5xl font-bold mb-4">PLANTIDEN</h1>
+          <p className="text-center text-xl max-w-md">
+            Join our thriving community of plant enthusiasts. Identify, learn,
+            and share your passion for plants!
           </p>
+          <ul className="mt-8 space-y-4">
+            <li className="flex items-center">
+              <Leaf className="h-6 w-6 mr-2" />
+              <span>Identify plants instantly</span>
+            </li>
+            <li className="flex items-center">
+              <Users className="h-6 w-6 mr-2" />
+              <span>Connect with plant lovers</span>
+            </li>
+            <li className="flex items-center">
+              <Leaf className="h-6 w-6 mr-2" />
+              <span>Learn about plant care</span>
+            </li>
+          </ul>
         </div>
       </div>
     </div>
