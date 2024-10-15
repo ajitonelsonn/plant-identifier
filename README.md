@@ -6,7 +6,7 @@ Plant Identifier is an AI-powered web application that helps users identify plan
 
 Check out our video demonstration to see Plant Identifier in action:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/YOUR_CHANNEL_ID" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/-u6xq7OWdnc?si=JNgVwXDTmx2cZKWD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 This video walks you through the main features of our application, including:
 
@@ -78,19 +78,7 @@ To get started:
    ```
 
 3. Set up environment variables:
-   Create a `.env.local` file in the root directory and add the following:
-
-   ```
-   DB_NAME=your_database_name
-   DB_USER=your_database_user
-   DB_PASSWORD=your_database_password
-   DB_HOST=localhost
-   DB_PORT=5432
-   TOGETHER_API_KEY=your_together_api_key
-   JWT_SECRET=your_jwt_secret
-   EMAIL_USER=your_email_for_sending_otp
-   EMAIL_PASS=your_email_password_or_app_specific_password
-   ```
+   Create a `.env.local` like .env.local_copy file in the root directory.
 
 4. Set up the database:
    Run the SQL commands provided in `database_setup.sql` to create the necessary tables.
