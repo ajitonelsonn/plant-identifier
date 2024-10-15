@@ -1,12 +1,14 @@
 # Plant Identifier
 
-Plant Identifier is an AI-powered web application that helps users identify plants from images. With an easy-to-use interface and advanced machine learning algorithms, it's the perfect tool for gardeners, nature enthusiasts, and anyone curious about the flora around them.
+Plant Identifier is an AI-powered web application that helps users identify plants from images. With an easy-to-use interface and advanced machine learning algorithms.
 
 ## Video Demonstration
 
 Check out our video demonstration to see Plant Identifier in action:
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/-u6xq7OWdnc?si=JNgVwXDTmx2cZKWD" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+[![Plant Identifier Demo](https://img.youtube.com/vi/-u6xq7OWdnc/0.jpg)](https://www.youtube.com/watch?v=-u6xq7OWdnc)
+
+Click on the image above to watch the video on YouTube.
 
 This video walks you through the main features of our application, including:
 
