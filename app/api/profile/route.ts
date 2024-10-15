@@ -47,3 +47,66 @@ export async function GET() {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token");
+
+  if (!token) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  try {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const { payload } = await jwtVerify(token.value, secret);
+
+    const body = await request.json();
+    if (body.confirmDelete !== "delete") {
+      return NextResponse.json(
+        { error: "Invalid confirmation" },
+        { status: 400 }
+      );
+    }
+
+    const client = await pool.connect();
+
+    try {
+      await client.query("BEGIN");
+
+      // Delete related records in plant_identifications
+      await client.query(
+        "DELETE FROM plant_identifications WHERE user_id = $1",
+        [payload.userId]
+      );
+
+      // Delete user
+      await client.query("DELETE FROM users WHERE id = $1", [payload.userId]);
+
+      await client.query("COMMIT");
+    } catch (error) {
+      await client.query("ROLLBACK");
+      throw error;
+    } finally {
+      client.release();
+    }
+
+    // Clear the authentication cookie
+    const response = NextResponse.json({
+      message: "Account deleted successfully",
+    });
+    response.cookies.set("token", "", {
+      httpOnly: true,
+      expires: new Date(0),
+      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+    });
+
+    return response;
+  } catch (error) {
+    console.error("Error deleting account:", error);
+    return NextResponse.json(
+      { error: "Failed to delete account" },
+      { status: 500 }
+    );
+  }
+}
