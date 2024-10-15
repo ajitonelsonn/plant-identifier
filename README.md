@@ -54,7 +54,7 @@ To get started:
 1. Clone the repository:
 
    ```
-   git clone https://github.com/yourusername/plant-identifier.git
+   git clone https://github.com/ajitonelsonn/plant-identifier.git
    cd plant-identifier
    ```
 
