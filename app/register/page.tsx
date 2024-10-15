@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Leaf, Mail, Lock, User, MapPin, Calendar, Users } from "lucide-react";
 import { AppError } from "../types/errors";
+import Modal from "../components/Modal";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -23,6 +24,12 @@ export default function Register() {
   const [otp, setOtp] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [modalInfo, setModalInfo] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "success" as "success" | "error",
+  });
   const router = useRouter();
 
   const handleChange = (
@@ -78,6 +85,13 @@ export default function Register() {
         // First step: check availability and send OTP
         await checkAvailability();
         await sendOTP();
+        setModalInfo({
+          isOpen: true,
+          title: "OTP Sent",
+          message:
+            "An OTP has been sent to your email. Please check and enter it below.",
+          type: "success",
+        });
       } else {
         // Second step: verify OTP and complete registration
         const response = await fetch("/api/register", {
@@ -98,7 +112,13 @@ export default function Register() {
         const data = await response.json();
 
         if (response.ok) {
-          router.push("/login?registered=true");
+          setModalInfo({
+            isOpen: true,
+            title: "SUCCESS",
+            message:
+              "Congratulations, your account has been successfully created.",
+            type: "success",
+          });
         } else {
           throw new AppError(
             data.message || "Registration failed. Please try again.",
@@ -117,6 +137,13 @@ export default function Register() {
       }
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleModalClose = () => {
+    setModalInfo({ ...modalInfo, isOpen: false });
+    if (modalInfo.title === "SUCCESS") {
+      router.push("/login");
     }
   };
 
@@ -321,6 +348,13 @@ export default function Register() {
           </p>
         </div>
       </div>
+      <Modal
+        isOpen={modalInfo.isOpen}
+        onClose={handleModalClose}
+        title={modalInfo.title}
+        message={modalInfo.message}
+        type={modalInfo.type}
+      />
     </div>
   );
 }
