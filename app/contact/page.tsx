@@ -3,6 +3,7 @@
 import React from "react";
 import { Mail, Phone, MapPin } from "lucide-react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 
 export default function Contact() {
   return (
@@ -81,9 +82,7 @@ export default function Contact() {
         </div>
       </main>
 
-      <footer className="bg-green-800 text-white p-4 text-center">
-        <p>&copy; 2024 Plant Identifier. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

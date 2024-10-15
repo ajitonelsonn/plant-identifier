@@ -2,6 +2,7 @@
 
 import React from "react";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 
 export default function PrivacyPolicy() {
   return (
@@ -49,9 +50,7 @@ export default function PrivacyPolicy() {
         </div>
       </main>
 
-      <footer className="bg-green-800 text-white p-4 text-center">
-        <p>&copy; 2024 Plant Identifier. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

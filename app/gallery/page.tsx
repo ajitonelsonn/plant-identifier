@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import Navigation from "../components/Navigation";
+import Footer from "../components/Footer";
 
 const plantGallery = [
   { id: 1, name: "Monstera Deliciosa", image: "/plants/monstera.jpg" },
@@ -50,9 +51,7 @@ export default function PlantGallery() {
         </div>
       </main>
 
-      <footer className="bg-green-800 text-white p-4 text-center">
-        <p>&copy; 2024 Plant Identifier. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }

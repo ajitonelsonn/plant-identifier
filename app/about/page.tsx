@@ -5,6 +5,7 @@ import { Info, Leaf, Users } from "lucide-react";
 import Navigation from "../components/Navigation";
 import { Linkedin, Facebook, Github } from "lucide-react";
 import Image from "next/image";
+import Footer from "../components/Footer";
 
 export default function About() {
   return (
@@ -126,9 +127,7 @@ export default function About() {
         </section>
       </main>
 
-      <footer className="bg-green-800 text-white p-4 text-center">
-        <p>&copy; 2024 Plant Identifier. All rights reserved.</p>
-      </footer>
+      <Footer />
     </div>
   );
 }
