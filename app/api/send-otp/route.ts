@@ -1,13 +1,13 @@
 import { NextResponse } from "next/server";
 import { pool } from "../../utils/db";
 import nodemailer from "nodemailer";
+import fs from "fs/promises";
+import path from "path";
 
-// Function to generate a random 6-digit OTP
 function generateOTP() {
   return Math.floor(100000 + Math.random() * 900000).toString();
 }
 
-// Create a nodemailer transporter
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -20,22 +20,29 @@ export async function POST(req: Request) {
   const { email } = await req.json();
 
   try {
-    // Generate OTP
     const otp = generateOTP();
 
-    // Store OTP in database with expiration time (15 minutes)
     await pool.query(
       "INSERT INTO otp_codes (email, code, expires_at) VALUES ($1, $2, NOW() + INTERVAL '15 minutes')",
       [email, otp]
     );
 
-    // Send OTP via email
+    // Read the email template
+    const templatePath = path.join(
+      process.cwd(),
+      "email-templates",
+      "otp-template.html"
+    );
+    let emailTemplate = await fs.readFile(templatePath, "utf8");
+
+    // Replace the OTP placeholder
+    emailTemplate = emailTemplate.replace("{OTP}", otp);
+
     await transporter.sendMail({
       from: '"PLANTIDEN" <noreply@plantiden.com>',
       to: email,
       subject: "Your PLANTIDEN Registration OTP",
-      text: `Your OTP for PLANTIDEN registration is: ${otp}. This code will expire in 15 minutes.`,
-      html: `<p>Your OTP for PLANTIDEN registration is: <strong>${otp}</strong></p><p>This code will expire in 15 minutes.</p>`,
+      html: emailTemplate,
     });
 
     return NextResponse.json({
