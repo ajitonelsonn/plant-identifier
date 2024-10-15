@@ -26,7 +26,7 @@ const Modal: React.FC<ModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-green-600 rounded-lg p-6 max-w-sm w-full">
+      <div className="bg-green-800 rounded-lg p-6 max-w-sm w-full">
         <h2 className="text-xl font-bold mb-4">{title}</h2>
         <p className="mb-6">{message}</p>
         <div className="flex justify-end space-x-4">

@@ -192,7 +192,7 @@ export default function Profile() {
       <Navigation />
       <main className="flex-grow container mx-auto px-4 py-8">
         <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
-          <div className="bg-green-500 h-32 relative">
+          <div className="bg-green-800 h-32 relative">
             <div className="absolute -bottom-16 left-8">
               <Image
                 src={avatarSrc}
