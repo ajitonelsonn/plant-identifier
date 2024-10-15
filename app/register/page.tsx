@@ -1,11 +1,13 @@
+// app/register/page.tsx
+
 "use client";
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import Modal from "../components/Modal";
 import { Leaf, Mail, Lock, User, MapPin, Calendar, Users } from "lucide-react";
+import { AppError } from "../types/errors";
 
 export default function Register() {
   const [formData, setFormData] = useState({
@@ -19,17 +21,10 @@ export default function Register() {
     gender: "",
     location: "",
   });
-  const [modalInfo, setModalInfo] = useState<{
-    isOpen: boolean;
-    title: string;
-    message: string;
-    type: "success" | "error";
-  }>({
-    isOpen: false,
-    title: "",
-    message: "",
-    type: "success",
-  });
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleChange = (
@@ -38,58 +33,88 @@ export default function Register() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("/api/register", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
+  const checkAvailability = async () => {
+    const response = await fetch("/api/check-availability", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        username: formData.username,
+        email: formData.email,
+      }),
+    });
 
+    if (!response.ok) {
       const data = await response.json();
-
-      if (response.ok) {
-        setModalInfo({
-          isOpen: true,
-          title: "Congratulations!",
-          message: "Registration successful! Click OK to proceed to login.",
-          type: "success",
-        });
-      } else {
-        setModalInfo({
-          isOpen: true,
-          title: "Registration Failed",
-          message: data.message || "Registration failed. Please try again.",
-          type: "error",
-        });
-      }
-    } catch {
-      setModalInfo({
-        isOpen: true,
-        title: "Error",
-        message: "An error occurred. Please try again later.",
-        type: "error",
-      });
+      throw new AppError(
+        data.message || "Username or email is not available",
+        "AVAILABILITY_CHECK_FAILED"
+      );
     }
   };
 
-  const closeModal = () => {
-    setModalInfo({ ...modalInfo, isOpen: false });
-    if (modalInfo.type === "success") {
-      router.push("/login");
+  const sendOTP = async () => {
+    const response = await fetch("/api/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: formData.email }),
+    });
+
+    if (!response.ok) {
+      const data = await response.json();
+      throw new AppError(
+        data.message || "Failed to send OTP",
+        "OTP_SEND_FAILED"
+      );
+    }
+
+    setOtpSent(true);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setIsLoading(true);
+
+    try {
+      if (!otpSent) {
+        // First step: check availability and send OTP
+        await checkAvailability();
+        await sendOTP();
+      } else {
+        // Second step: verify OTP and complete registration
+        const response = await fetch("/api/register", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ...formData, otp }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          router.push("/login?registered=true");
+        } else {
+          throw new AppError(
+            data.message || "Registration failed. Please try again.",
+            "REGISTRATION_FAILED"
+          );
+        }
+      }
+    } catch (error: unknown) {
+      console.error("Registration error:", error);
+      if (error instanceof AppError) {
+        setError(error.message);
+      } else if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred. Please try again later.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
     <div className="min-h-screen flex bg-gradient-to-br from-green-50 to-green-100">
-      <Modal
-        isOpen={modalInfo.isOpen}
-        onClose={closeModal}
-        title={modalInfo.title}
-        message={modalInfo.message}
-        type={modalInfo.type}
-      />
       <div className="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
         <div className="mx-auto w-full max-w-sm lg:w-96">
           <div className="text-center mb-8">
@@ -101,122 +126,153 @@ export default function Register() {
               Join our community of plant enthusiasts
             </p>
           </div>
+          {error && <p className="text-red-500 text-center mb-4">{error}</p>}
           <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-            <div className="rounded-md shadow-sm -space-y-px">
-              <div className="flex items-center border border-gray-300 rounded-t-md">
-                <User className="absolute ml-3 text-gray-400" size={18} />
-                <input
-                  name="username"
-                  type="text"
-                  required
-                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                  placeholder="Username"
-                  value={formData.username}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex items-center border border-gray-300">
-                <Mail className="absolute ml-3 text-gray-400" size={18} />
-                <input
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                  placeholder="Email address"
-                  value={formData.email}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex items-center border border-gray-300">
-                <Lock className="absolute ml-3 text-gray-400" size={18} />
-                <input
-                  name="password"
-                  type="password"
-                  autoComplete="new-password"
-                  required
-                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                  placeholder="Password"
-                  value={formData.password}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex items-center border border-gray-300">
-                <User className="absolute ml-3 text-gray-400" size={18} />
-                <input
-                  name="firstName"
-                  type="text"
-                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                  placeholder="First Name"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex items-center border border-gray-300">
-                <User className="absolute ml-3 text-gray-400" size={18} />
-                <input
-                  name="lastName"
-                  type="text"
-                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                  placeholder="Last Name"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex items-center border border-gray-300">
-                <User className="absolute ml-3 text-gray-400" size={18} />
-                <input
-                  name="displayName"
-                  type="text"
-                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                  placeholder="Display Name"
-                  value={formData.displayName}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex items-center border border-gray-300">
-                <Calendar className="absolute ml-3 text-gray-400" size={18} />
-                <input
-                  name="dateOfBirth"
-                  type="date"
-                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                  placeholder="Date of Birth"
-                  value={formData.dateOfBirth}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="flex items-center border border-gray-300">
-                <Users className="absolute ml-3 text-gray-400" size={18} />
-                <select
-                  name="gender"
-                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                  value={formData.gender}
-                  onChange={handleChange}
+            {!otpSent ? (
+              <>
+                <div className="rounded-md shadow-sm -space-y-px">
+                  <div className="flex items-center border border-gray-300 rounded-t-md">
+                    <User className="absolute ml-3 text-gray-400" size={18} />
+                    <input
+                      name="username"
+                      type="text"
+                      required
+                      className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                      placeholder="Username"
+                      value={formData.username}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="flex items-center border border-gray-300">
+                    <Mail className="absolute ml-3 text-gray-400" size={18} />
+                    <input
+                      name="email"
+                      type="email"
+                      autoComplete="email"
+                      required
+                      className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                      placeholder="Email address"
+                      value={formData.email}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="flex items-center border border-gray-300">
+                    <Lock className="absolute ml-3 text-gray-400" size={18} />
+                    <input
+                      name="password"
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                      placeholder="Password"
+                      value={formData.password}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="flex items-center border border-gray-300">
+                    <User className="absolute ml-3 text-gray-400" size={18} />
+                    <input
+                      name="firstName"
+                      type="text"
+                      className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                      placeholder="First Name"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="flex items-center border border-gray-300">
+                    <User className="absolute ml-3 text-gray-400" size={18} />
+                    <input
+                      name="lastName"
+                      type="text"
+                      className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                      placeholder="Last Name"
+                      value={formData.lastName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="flex items-center border border-gray-300">
+                    <User className="absolute ml-3 text-gray-400" size={18} />
+                    <input
+                      name="displayName"
+                      type="text"
+                      className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                      placeholder="Display Name"
+                      value={formData.displayName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="flex items-center border border-gray-300">
+                    <Calendar
+                      className="absolute ml-3 text-gray-400"
+                      size={18}
+                    />
+                    <input
+                      name="dateOfBirth"
+                      type="date"
+                      className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                      placeholder="Date of Birth"
+                      value={formData.dateOfBirth}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div className="flex items-center border border-gray-300">
+                    <Users className="absolute ml-3 text-gray-400" size={18} />
+                    <select
+                      name="gender"
+                      className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                      value={formData.gender}
+                      onChange={handleChange}
+                    >
+                      <option value="">Select Gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                      <option value="prefer_not_to_say">
+                        Prefer not to say
+                      </option>
+                    </select>
+                  </div>
+                  <div className="flex items-center border border-gray-300 rounded-b-md">
+                    <MapPin className="absolute ml-3 text-gray-400" size={18} />
+                    <input
+                      name="location"
+                      type="text"
+                      className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
+                      placeholder="Location"
+                      value={formData.location}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div>
+                <label
+                  htmlFor="otp"
+                  className="block text-sm font-medium text-gray-700"
                 >
-                  <option value="">Select Gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                  <option value="prefer_not_to_say">Prefer not to say</option>
-                </select>
+                  Enter OTP sent to your email
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="otp"
+                    id="otp"
+                    className="shadow-sm focus:ring-green-500 focus:border-green-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    required
+                  />
+                </div>
               </div>
-              <div className="flex items-center border border-gray-300 rounded-b-md">
-                <MapPin className="absolute ml-3 text-gray-400" size={18} />
-                <input
-                  name="location"
-                  type="text"
-                  className="appearance-none rounded-none relative block w-full pl-10 px-3 py-2 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-green-500 focus:border-green-500 focus:z-10 sm:text-sm"
-                  placeholder="Location"
-                  value={formData.location}
-                  onChange={handleChange}
-                />
-              </div>
-            </div>
-
+            )}
             <div>
               <button
                 type="submit"
                 className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition duration-150 ease-in-out"
+                disabled={isLoading}
               >
                 <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                   <Leaf
@@ -224,7 +280,11 @@ export default function Register() {
                     aria-hidden="true"
                   />
                 </span>
-                Sign Up
+                {isLoading
+                  ? "Processing..."
+                  : otpSent
+                  ? "Verify OTP"
+                  : "Send OTP"}
               </button>
             </div>
           </form>
@@ -252,20 +312,6 @@ export default function Register() {
             Join our thriving community of plant enthusiasts. Identify, learn,
             and share your passion for plants!
           </p>
-          <ul className="mt-8 space-y-4">
-            <li className="flex items-center">
-              <Leaf className="h-6 w-6 mr-2" />
-              <span>Identify plants instantly</span>
-            </li>
-            <li className="flex items-center">
-              <Users className="h-6 w-6 mr-2" />
-              <span>Connect with plant lovers</span>
-            </li>
-            <li className="flex items-center">
-              <Leaf className="h-6 w-6 mr-2" />
-              <span>Learn about plant care</span>
-            </li>
-          </ul>
         </div>
       </div>
     </div>
