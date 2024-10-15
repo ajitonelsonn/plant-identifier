@@ -11,11 +11,13 @@
   "dependencies": {
     "bcrypt": "^5.1.1",
     "chart.js": "^4.4.4",
+    "fs": "^0.0.1-security",
     "jose": "^5.9.3",
     "jsonwebtoken": "^9.0.2",
     "lucide-react": "^0.447.0",
     "next": "14.2.14",
     "nodemailer": "^6.9.15",
+    "path": "^0.12.7",
     "pg": "^8.13.0",
     "punycode": "^2.3.1",
     "react": "^18",
