@@ -1,3 +1,5 @@
+// app/api/register/route.ts
+
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { pool } from "../../utils/db";
@@ -13,9 +15,23 @@ export async function POST(req: Request) {
     dateOfBirth,
     gender,
     location,
+    otp,
   } = await req.json();
 
   try {
+    // Verify OTP
+    const otpResult = await pool.query(
+      "SELECT * FROM otp_codes WHERE email = $1 AND code = $2 AND expires_at > NOW()",
+      [email, otp]
+    );
+
+    if (otpResult.rows.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Invalid or expired OTP" },
+        { status: 400 }
+      );
+    }
+
     // Check if user already exists
     const userCheck = await pool.query(
       "SELECT * FROM users WHERE username = $1 OR email = $2",
@@ -50,6 +66,9 @@ export async function POST(req: Request) {
         location,
       ]
     );
+
+    // Delete used OTP
+    await pool.query("DELETE FROM otp_codes WHERE email = $1", [email]);
 
     return NextResponse.json(
       { success: true, message: "User registered successfully" },
