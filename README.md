@@ -96,10 +96,6 @@ To get started:
 
 7. Open your browser and navigate to `http://localhost:3000`
 
-```
-
-```
-
 ## API Routes
 
 Our application uses the following API routes:
