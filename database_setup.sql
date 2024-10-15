@@ -66,3 +66,13 @@ CREATE TRIGGER update_plant_identifications_updated_at
 BEFORE UPDATE ON plant_identifications
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
+
+
+---Create OTP code table
+CREATE TABLE otp_codes (
+  id SERIAL PRIMARY KEY,
+  email VARCHAR(255) NOT NULL,
+  code VARCHAR(6) NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  expires_at TIMESTAMP NOT NULL
+);

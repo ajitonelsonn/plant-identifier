@@ -1,5 +1,3 @@
-// app/api/register/route.ts
-
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import { pool } from "../../utils/db";
@@ -32,18 +30,6 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if user already exists
-    const userCheck = await pool.query(
-      "SELECT * FROM users WHERE username = $1 OR email = $2",
-      [username, email]
-    );
-    if (userCheck.rows.length > 0) {
-      return NextResponse.json(
-        { success: false, message: "Username or email already exists" },
-        { status: 400 }
-      );
-    }
-
     // Hash the password
     const saltRounds = 10;
     const passwordHash = await bcrypt.hash(password, saltRounds);
@@ -53,7 +39,7 @@ export async function POST(req: Request) {
       `INSERT INTO users (
         username, email, password_hash, first_name, last_name, 
         display_name, date_of_birth, gender, location
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING id`,
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         username,
         email,
