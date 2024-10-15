@@ -13,10 +13,12 @@ import {
   Cake,
   Users,
   Leaf,
+  Trash2,
 } from "lucide-react";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import { Bar } from "react-chartjs-2";
+import Modal from "../components/Modal";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -66,6 +68,15 @@ export default function Profile() {
     PlantIdentification[]
   >([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  const [modalInfo, setModalInfo] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "success" as "success" | "error",
+  });
+  const [deleteConfirmation, setDeleteConfirmation] = useState("");
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const router = useRouter();
 
   const fetchProfile = useCallback(async () => {
@@ -116,6 +127,63 @@ export default function Profile() {
       }
     } catch (error) {
       console.error("Error fetching plant identifications:", error);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    if (deleteConfirmation.toLowerCase() !== "delete") {
+      setModalInfo({
+        isOpen: true,
+        title: "Invalid Confirmation",
+        message: 'Please type "delete" to confirm account deletion.',
+        type: "error",
+      });
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/profile", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ confirmDelete: deleteConfirmation }),
+      });
+
+      if (response.ok) {
+        setModalInfo({
+          isOpen: true,
+          title: "Account Deleted",
+          message: "Your account has been successfully deleted.",
+          type: "success",
+        });
+      } else {
+        const data = await response.json();
+        setModalInfo({
+          isOpen: true,
+          title: "Deletion Failed",
+          message: `Failed to delete account: ${data.error}`,
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Error deleting account:", error);
+      setModalInfo({
+        isOpen: true,
+        title: "Error",
+        message:
+          "An error occurred while deleting your account. Please try again.",
+        type: "error",
+      });
+    } finally {
+      setShowDeleteConfirm(false);
+    }
+  };
+
+  const handleModalClose = () => {
+    setModalInfo({ ...modalInfo, isOpen: false });
+    if (modalInfo.type === "success" && modalInfo.title === "Account Deleted") {
+      router.push("/");
     }
   };
 
@@ -296,6 +364,67 @@ export default function Profile() {
             )}
           </div>
         </div>
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden mb-8">
+          <div className="px-8 py-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">
+              Account Management
+            </h2>
+            <button
+              onClick={() => setShowDeleteConfirm(true)}
+              className="bg-red-500 text-white px-6 py-2 rounded-full flex items-center hover:bg-red-600 transition duration-300"
+            >
+              <Trash2 className="mr-2" size={18} />
+              Delete Account
+            </button>
+          </div>
+        </div>
+
+        {/* Delete Account Confirmation */}
+        {showDeleteConfirm && (
+          <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+            <div className="bg-white p-8 rounded-lg shadow-xl max-w-md w-full">
+              <h2 className="text-2xl font-bold mb-4 text-red-600">
+                Delete Account
+              </h2>
+              <p className="mb-4 text-gray-700">
+                Are you sure you want to delete your account? This action cannot
+                be undone.
+              </p>
+              <p className="mb-4 text-gray-700">
+                Please type "delete" to confirm:
+              </p>
+              <input
+                type="text"
+                value={deleteConfirmation}
+                onChange={(e) => setDeleteConfirmation(e.target.value)}
+                className="border p-2 mb-4 w-full rounded"
+              />
+              <div className="flex justify-end space-x-4">
+                <button
+                  onClick={() => setShowDeleteConfirm(false)}
+                  className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400 transition duration-300"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition duration-300"
+                >
+                  Delete Account
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Success/Error Modal */}
+        <Modal
+          isOpen={modalInfo.isOpen}
+          onClose={handleModalClose}
+          title={modalInfo.title}
+          message={modalInfo.message}
+          type={modalInfo.type}
+        />
       </main>
       <Footer />
     </div>
