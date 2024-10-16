@@ -19,9 +19,10 @@ export async function POST(request: Request) {
       temperature: 0.7,
     });
 
-    const careTips =
+    const careTips = (
       response.choices[0]?.message?.content ||
-      "Sorry, I couldn't generate care tips at this time.";
+      "Sorry, I couldn't generate care tips at this time."
+    ).replace(/\*/g, "");
 
     return NextResponse.json({ careTips });
   } catch (error) {

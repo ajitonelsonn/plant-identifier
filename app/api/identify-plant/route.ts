@@ -73,34 +73,40 @@ export async function POST(request: Request) {
         lines
           .find((line) => line.toLowerCase().includes("name:"))
           ?.split(":")[1]
-          ?.trim() || "Unknown",
+          ?.trim()
+          .replace(/\*/g, "") || "Unknown",
       scientificName:
         lines
           .find((line) => line.toLowerCase().includes("scientific name:"))
           ?.split(":")[1]
-          ?.trim() || "Unknown",
+          ?.trim()
+          .replace(/\*/g, "") || "Unknown",
       family:
         lines
           .find((line) => line.toLowerCase().includes("family:"))
           ?.split(":")[1]
-          ?.trim() || "Unknown",
+          ?.trim()
+          .replace(/\*/g, "") || "Unknown",
       type:
         lines
           .find((line) => line.toLowerCase().includes("type:"))
           ?.split(":")[1]
-          ?.trim() || "Unknown",
+          ?.trim()
+          .replace(/\*/g, "") || "Unknown",
       careLevel:
         lines
           .find((line) => line.toLowerCase().includes("care level:"))
           ?.split(":")[1]
-          ?.trim() || "Unknown",
+          ?.trim()
+          .replace(/\*/g, "") || "Unknown",
       description:
         lines
           .find((line) => line.toLowerCase().includes("description:"))
           ?.split(":")
           .slice(1)
           .join(":")
-          .trim() || "No description available",
+          .trim()
+          .replace(/\*/g, "") || "No description available",
     };
 
     const query = `
