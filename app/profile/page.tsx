@@ -391,7 +391,7 @@ export default function Profile() {
                 be undone.
               </p>
               <p className="mb-4 text-gray-700">
-                Please type "delete" to confirm:
+                Please type &quot;delete&quot; to confirm:
               </p>
               <input
                 type="text"
