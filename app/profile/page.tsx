@@ -29,6 +29,7 @@ import {
   Legend,
   ChartOptions,
 } from "chart.js";
+import Link from "next/link";
 
 ChartJS.register(
   CategoryScale,
@@ -318,8 +319,10 @@ export default function Profile() {
               />
             </div>
             <button className="mt-8 bg-green-500 text-white px-6 py-2 rounded-full flex items-center hover:bg-green-600 transition duration-300">
-              <Edit3 className="mr-2" size={18} />
-              Edit Profile
+              <Link href="/edit-profile" className="flex items-center">
+                <Edit3 className="mr-2" size={18} />
+                Edit Profile
+              </Link>
             </button>
           </div>
         </div>

@@ -110,3 +110,64 @@ export async function DELETE(request: Request) {
     );
   }
 }
+
+export async function PUT(req: Request) {
+  const cookieStore = cookies();
+  const token = cookieStore.get("token");
+
+  if (!token) {
+    return NextResponse.json({ error: "Not authenticated" }, { status: 401 });
+  }
+
+  try {
+    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
+    const { payload } = await jwtVerify(token.value, secret);
+
+    const { firstName, lastName, displayName, dateOfBirth, gender, location } =
+      await req.json();
+
+    // Update user profile
+    const result = await pool.query(
+      `UPDATE users 
+       SET first_name = $1, last_name = $2, 
+           display_name = $3, date_of_birth = $4, gender = $5, location = $6
+       WHERE id = $7
+       RETURNING *`,
+      [
+        firstName,
+        lastName,
+        displayName,
+        dateOfBirth,
+        gender,
+        location,
+        payload.userId,
+      ]
+    );
+
+    if (result.rows.length === 0) {
+      return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    const updatedUser = result.rows[0];
+
+    return NextResponse.json({
+      message: "Profile updated successfully",
+      user: {
+        username: updatedUser.username,
+        email: updatedUser.email,
+        firstName: updatedUser.first_name,
+        lastName: updatedUser.last_name,
+        displayName: updatedUser.display_name,
+        dateOfBirth: updatedUser.date_of_birth,
+        gender: updatedUser.gender,
+        location: updatedUser.location,
+      },
+    });
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    return NextResponse.json(
+      { error: "Failed to update profile" },
+      { status: 500 }
+    );
+  }
+}
