@@ -1,7 +1,6 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Upload, Camera } from "lucide-react";
 import { useRouter } from "next/navigation";
-import Modal from "./Modal"; // Import the Modal component
 
 interface ImageUploadProps {
   onImageCapture: (file: File) => void;
@@ -15,30 +14,23 @@ export default function ImageUpload({
   isLoading,
 }: ImageUploadProps) {
   const [dragActive, setDragActive] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [callback, setCallback] = useState<(() => void) | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
-  const checkAuthAndProceed = async (callback: () => void) => {
-    const response = await fetch("/api/check-auth");
-    if (response.ok) {
-      callback();
-    } else {
-      setCallback(() => callback);
-      setIsModalOpen(true);
-    }
-  };
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-    setCallback(null);
-  };
-
-  const handleModalConfirm = () => {
-    setIsModalOpen(false);
-    router.push("/login");
-  };
+  // Check if the user is logged in when the component mounts
+  useEffect(() => {
+    const checkAuthStatus = async () => {
+      const response = await fetch("/api/check-auth");
+      if (response.ok) {
+        setIsLoggedIn(true);
+      } else {
+        setIsLoggedIn(false);
+      }
+    };
+    checkAuthStatus();
+  }, []);
 
   const resizeImage = (file: File): Promise<File> => {
     return new Promise((resolve) => {
@@ -50,7 +42,6 @@ export default function ImageUpload({
           let width = img.width;
           let height = img.height;
 
-          // Calculate the width and height, constraining the proportions
           if (width > height) {
             if (width > 1000) {
               height = Math.round((height * 1000) / width);
@@ -80,7 +71,7 @@ export default function ImageUpload({
             },
             "image/jpeg",
             0.7
-          ); // Adjust quality here (0.7 = 70% quality)
+          );
         };
         img.src = e.target?.result as string;
       };
@@ -110,24 +101,36 @@ export default function ImageUpload({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
+    if (!isLoggedIn) {
+      return;
+    }
     const files = e.dataTransfer.files;
     if (files && files.length > 0) {
-      checkAuthAndProceed(() => processFile(files[0]));
+      processFile(files[0]);
     }
   };
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
+    if (!isLoggedIn) {
+      return;
+    }
     const files = e.target.files;
     if (files && files.length > 0) {
-      checkAuthAndProceed(() => processFile(files[0]));
+      processFile(files[0]);
     }
   };
 
-  const handleCameraCapture = () => {
-    checkAuthAndProceed(() => {
+  const handleFileUploadClick = () => {
+    if (isLoggedIn) {
+      fileInputRef.current?.click();
+    }
+  };
+
+  const handleCameraCaptureClick = () => {
+    if (isLoggedIn) {
       cameraInputRef.current?.click();
-    });
+    }
   };
 
   return (
@@ -136,27 +139,16 @@ export default function ImageUpload({
       <div
         className={`flex flex-col items-center justify-center w-full h-64 border-2 border-green-300 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition duration-300 ${
           dragActive ? "bg-gray-700" : ""
-        }`}
-        onDragEnter={(e) => {
-          checkAuthAndProceed(() => handleDrag(e));
-        }}
-        onDragLeave={(e) => {
-          checkAuthAndProceed(() => handleDrag(e));
-        }}
-        onDragOver={(e) => {
-          checkAuthAndProceed(() => handleDrag(e));
-        }}
-        onDrop={(e) => {
-          checkAuthAndProceed(() => handleDrop(e));
-        }}
+        } ${isLoading || !isLoggedIn ? "opacity-50 cursor-not-allowed" : ""}`}
+        onDragEnter={handleDrag}
+        onDragLeave={handleDrag}
+        onDragOver={handleDrag}
+        onDrop={handleDrop}
+        onClick={handleFileUploadClick}
       >
         <label
           htmlFor="file-upload"
           className="flex flex-col items-center justify-center pt-5 pb-6 cursor-pointer"
-          onClick={(e) => {
-            e.preventDefault();
-            checkAuthAndProceed(() => {});
-          }}
         >
           <Upload className="w-10 h-10 mb-3 text-green-400" />
           <p className="mb-2 text-sm text-green-400">
@@ -172,16 +164,19 @@ export default function ImageUpload({
         id="file-upload"
         type="file"
         className="hidden"
+        ref={fileInputRef}
         onChange={handleChange}
         accept="image/*"
-        disabled={isLoading}
+        disabled={isLoading || !isLoggedIn}
       />
 
       {/* Camera Capture Button */}
       <button
-        onClick={handleCameraCapture}
-        className="w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center"
-        disabled={isLoading}
+        onClick={handleCameraCaptureClick}
+        className={`w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center ${
+          isLoading || !isLoggedIn ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        disabled={isLoading || !isLoggedIn}
       >
         <Camera className="w-5 h-5 mr-2" />
         Capture from Camera
@@ -193,16 +188,7 @@ export default function ImageUpload({
         className="hidden"
         ref={cameraInputRef}
         onChange={handleChange}
-        disabled={isLoading}
-      />
-
-      {/* Authentication Modal */}
-      <Modal
-        isOpen={isModalOpen}
-        onClose={handleModalClose}
-        title="Authentication Required"
-        message="You need to be logged in to perform this action."
-        type="error"
+        disabled={isLoading || !isLoggedIn}
       />
     </div>
   );

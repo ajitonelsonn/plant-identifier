@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Menu, X, User } from "lucide-react";
 import { LinkProps } from "next/link";
+import Loading from "./Loading";
 
 // Modal Component
 interface ModalProps {
@@ -54,6 +55,7 @@ export default function Navigation() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLogoutModalOpen, setIsLogoutModalOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     checkAuthStatus();
@@ -75,18 +77,24 @@ export default function Navigation() {
 
   const confirmLogout = async () => {
     try {
+      setIsLoading(true); // Show loading spinner
       const response = await fetch("/api/logout", {
         method: "POST",
       });
       if (response.ok) {
+        // Clear authentication state
         setIsAuthenticated(false);
         setIsLogoutModalOpen(false);
-        router.push("/");
+        setIsLoading(false);
+        // Force a hard refresh to clear any cached data and update the UI
+        window.location.reload();
       } else {
         console.error("Logout failed");
+        setIsLoading(false);
       }
     } catch (error) {
       console.error("Logout error:", error);
+      setIsLoading(false);
     }
   };
 
@@ -99,50 +107,53 @@ export default function Navigation() {
   };
 
   return (
-    <nav className="bg-green-800 p-4">
-      <div className="container mx-auto flex justify-between items-center">
-        <Link href="/" className="text-2xl font-bold text-white">
-          Plant Identifier 🇹🇱
-        </Link>
+    <>
+      {isLoading && <Loading />} {/* Show Loading during logout */}
+      <nav className="bg-green-800 p-4">
+        <div className="container mx-auto flex justify-between items-center">
+          <Link href="/" className="text-2xl font-bold text-white">
+            Plant Identifier 🇹🇱
+          </Link>
 
-        {/* Hamburger menu for mobile */}
-        <div className="md:hidden">
-          <button onClick={toggleMenu} className="text-white">
-            {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
-          </button>
+          {/* Hamburger menu for mobile */}
+          <div className="md:hidden">
+            <button onClick={toggleMenu} className="text-white">
+              {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
+
+          {/* Desktop menu */}
+          <ul className="hidden md:flex space-x-4 items-center">
+            <NavItems
+              isAuthenticated={isAuthenticated}
+              handleLogout={handleLogout}
+              handleLogin={handleLogin}
+            />
+          </ul>
         </div>
 
-        {/* Desktop menu */}
-        <ul className="hidden md:flex space-x-4 items-center">
-          <NavItems
-            isAuthenticated={isAuthenticated}
-            handleLogout={handleLogout}
-            handleLogin={handleLogin}
-          />
-        </ul>
-      </div>
+        {/* Mobile menu dropdown */}
+        {isMenuOpen && (
+          <ul className="md:hidden mt-4 space-y-2">
+            <NavItems
+              isAuthenticated={isAuthenticated}
+              handleLogout={handleLogout}
+              handleLogin={handleLogin}
+              mobile
+            />
+          </ul>
+        )}
 
-      {/* Mobile menu dropdown */}
-      {isMenuOpen && (
-        <ul className="md:hidden mt-4 space-y-2">
-          <NavItems
-            isAuthenticated={isAuthenticated}
-            handleLogout={handleLogout}
-            handleLogin={handleLogin}
-            mobile
-          />
-        </ul>
-      )}
-
-      {/* Logout Confirmation Modal */}
-      <Modal
-        isOpen={isLogoutModalOpen}
-        onClose={() => setIsLogoutModalOpen(false)}
-        onConfirm={confirmLogout}
-        title="Confirm Logout"
-        message="Are you sure you want to log out?"
-      />
-    </nav>
+        {/* Logout Confirmation Modal */}
+        <Modal
+          isOpen={isLogoutModalOpen}
+          onClose={() => setIsLogoutModalOpen(false)}
+          onConfirm={confirmLogout}
+          title="Confirm Logout"
+          message="Are you sure you want to log out?"
+        />
+      </nav>
+    </>
   );
 }
 
