@@ -6,16 +6,16 @@
 
 Check out our video demonstration to see Plant Identifier in action:
 
-[![Plant Identifier Demo](https://img.youtube.com/vi/-u6xq7OWdnc/0.jpg)](https://www.youtube.com/watch?v=-u6xq7OWdnc)
+[![Plant Identifier Demo](/public/demo.png)](https://www.facebook.com/share/v/UWet4uf8RQNtzgfF/)
 
-Click on the image above to watch the video on YouTube.
+Click on the image above to watch the video on Facebook.
 
 ### Features Highlighted in the Video:
 
-- User registration and login
-- Image upload for plant identification
-- Viewing plant care tips
-- Managing your plant collection
+✅ Register for an account
+✅ Log in securely
+✅ Identify plants with just a photo
+✅ Manage your account (including how to delete it if needed)
 
 ## Live Demo
 
@@ -87,6 +87,8 @@ To get started:
 - `/api/identify-plant`: Processes plant identification.
 - `/api/register`: Manages user registration and OTP verification.
 - `/api/profile`: Manages user profiles.
+- `/api/forgot-password`: For Forgot Password.
+- `/api/reset-password`: For reset password.
 
 ## Learn More
 
