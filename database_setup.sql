@@ -37,14 +37,34 @@ CREATE TABLE plant_identifications (
     identified_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create index on users.username for faster lookups
+-- Create OTP codes table
+CREATE TABLE otp_codes (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    code VARCHAR(6) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    CONSTRAINT unique_active_otp UNIQUE (email, code, expires_at),
+    CONSTRAINT check_code_length CHECK (length(code) = 6),
+    CONSTRAINT check_expiry_future CHECK (expires_at > created_at)
+);
+
+-- Create password reset OTPs table
+CREATE TABLE password_reset_otps (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) NOT NULL,
+    otp VARCHAR(6) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    expires_at TIMESTAMP NOT NULL,
+    CONSTRAINT unique_active_reset_otp UNIQUE (email, otp, expires_at)
+);
+
+-- Create indexes
 CREATE INDEX idx_users_username ON users(username);
-
--- Create index on users.email for faster lookups
 CREATE INDEX idx_users_email ON users(email);
-
--- Create index on plant_identifications.user_id for faster lookups
 CREATE INDEX idx_plant_identifications_user_id ON plant_identifications(user_id);
+CREATE INDEX idx_otp_codes_email_expires ON otp_codes (email, expires_at);
+CREATE INDEX idx_password_reset_otps_email_expires ON password_reset_otps (email, expires_at);
 
 -- Create a function to update the updated_at column
 CREATE OR REPLACE FUNCTION update_updated_at_column()
@@ -55,24 +75,39 @@ BEGIN
 END;
 $$ language 'plpgsql';
 
--- Create a trigger to automatically update the updated_at column for users
+-- Create triggers to automatically update the updated_at column
 CREATE TRIGGER update_users_updated_at
 BEFORE UPDATE ON users
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
--- Create a trigger to automatically update the updated_at column for plant_identifications
 CREATE TRIGGER update_plant_identifications_updated_at
 BEFORE UPDATE ON plant_identifications
 FOR EACH ROW
 EXECUTE FUNCTION update_updated_at_column();
 
+-- Create a function to delete expired OTPs
+CREATE OR REPLACE FUNCTION delete_expired_otps()
+RETURNS void AS $$
+BEGIN
+  DELETE FROM otp_codes WHERE expires_at < NOW();
+  DELETE FROM password_reset_otps WHERE expires_at < NOW();
+END;
+$$ LANGUAGE plpgsql;
 
----Create OTP code table
-CREATE TABLE otp_codes (
-  id SERIAL PRIMARY KEY,
-  email VARCHAR(255) NOT NULL,
-  code VARCHAR(6) NOT NULL,
-  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  expires_at TIMESTAMP NOT NULL
-);
+-- Create a trigger to automatically delete expired OTPs
+CREATE OR REPLACE FUNCTION trigger_delete_expired_otps()
+RETURNS trigger AS $$
+BEGIN
+  PERFORM delete_expired_otps();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER delete_expired_otps_trigger
+AFTER INSERT ON otp_codes
+EXECUTE FUNCTION trigger_delete_expired_otps();
+
+CREATE TRIGGER delete_expired_reset_otps_trigger
+AFTER INSERT ON password_reset_otps
+EXECUTE FUNCTION trigger_delete_expired_otps();
