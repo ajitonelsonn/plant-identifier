@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock } from "lucide-react";
 import Navigation from "../components/Navigation";
 import Footer from "../components/Footer";
 import Modal from "../components/Modal";
