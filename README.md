@@ -15,7 +15,7 @@ Click on the image above to watch the video on Facebook.
 - Account registration
 - Secure login
 - Plant identification with a photo
-- Account management (including account deletion)
+- Account management (including account deletion, edit password, edit profile)
 
 ## Live Demo
 
