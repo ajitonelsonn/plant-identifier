@@ -4,17 +4,22 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import Modal from "../components/Modal";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [modalInfo, setModalInfo] = useState({
+    isOpen: false,
+    title: "",
+    message: "",
+    type: "success" as "success" | "error",
+  });
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
     setIsLoading(true);
 
     try {
@@ -27,14 +32,24 @@ export default function Login() {
       const data = await response.json();
 
       if (response.ok && data.success) {
-        await loadUserData(); // Load any necessary user data
+        await loadUserData();
         router.push("/");
       } else {
-        setError(data.message || "Invalid credentials. Please try again.");
+        setModalInfo({
+          isOpen: true,
+          title: "Login Failed",
+          message: data.message || "Invalid credentials. Please try again.",
+          type: "error",
+        });
       }
     } catch (error) {
       console.error("Login error:", error);
-      setError("An unexpected error occurred. Please try again.");
+      setModalInfo({
+        isOpen: true,
+        title: "Error",
+        message: "Password or Username not correct. Please try again.",
+        type: "error",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -42,8 +57,11 @@ export default function Login() {
 
   const loadUserData = async () => {
     // Fetch any necessary user data here
-
     await new Promise((resolve) => setTimeout(resolve, 1000));
+  };
+
+  const closeModal = () => {
+    setModalInfo({ ...modalInfo, isOpen: false });
   };
 
   return (
@@ -82,7 +100,6 @@ export default function Login() {
             Welcome
           </h2>
           <p className="text-gray-600 mb-8">Log in to your account</p>
-          {error && <p className="text-red-500 mb-4">{error}</p>}
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="username" className="block text-gray-700 mb-2">
@@ -112,7 +129,7 @@ export default function Login() {
             </div>
             <div className="flex justify-end">
               <Link
-                href="/login"
+                href="/forgot-password"
                 className="text-sm text-green-600 hover:underline"
               >
                 Forgot Password?
@@ -160,6 +177,13 @@ export default function Login() {
           </p>
         </div>
       </div>
+      <Modal
+        isOpen={modalInfo.isOpen}
+        onClose={closeModal}
+        title={modalInfo.title}
+        message={modalInfo.message}
+        type={modalInfo.type}
+      />
     </div>
   );
 }
