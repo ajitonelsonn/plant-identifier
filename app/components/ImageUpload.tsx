@@ -1,11 +1,11 @@
 import React, { useState, useRef } from "react";
 import { Upload, Camera } from "lucide-react";
 import { useRouter } from "next/navigation";
+import Modal from "./Modal"; // Import the Modal component
 
 interface ImageUploadProps {
   onImageCapture: (file: File) => void;
   isLoading: boolean;
-  isDisabled: boolean;
 }
 
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
@@ -13,25 +13,31 @@ const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB in bytes
 export default function ImageUpload({
   onImageCapture,
   isLoading,
-  isDisabled,
 }: ImageUploadProps) {
   const [dragActive, setDragActive] = useState(false);
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const cameraInputRef = useRef<HTMLInputElement>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [callback, setCallback] = useState<(() => void) | null>(null);
   const router = useRouter();
+  const cameraInputRef = useRef<HTMLInputElement>(null);
 
   const checkAuthAndProceed = async (callback: () => void) => {
     const response = await fetch("/api/check-auth");
     if (response.ok) {
       callback();
     } else {
-      const shouldLogin = confirm(
-        "You need to be logged in to perform this action. Would you like to log in?"
-      );
-      if (shouldLogin) {
-        router.push("/login");
-      }
+      setCallback(() => callback);
+      setIsModalOpen(true);
     }
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+    setCallback(null);
+  };
+
+  const handleModalConfirm = () => {
+    setIsModalOpen(false);
+    router.push("/login");
   };
 
   const resizeImage = (file: File): Promise<File> => {
@@ -44,6 +50,7 @@ export default function ImageUpload({
           let width = img.width;
           let height = img.height;
 
+          // Calculate the width and height, constraining the proportions
           if (width > height) {
             if (width > 1000) {
               height = Math.round((height * 1000) / width);
@@ -73,7 +80,7 @@ export default function ImageUpload({
             },
             "image/jpeg",
             0.7
-          );
+          ); // Adjust quality here (0.7 = 70% quality)
         };
         img.src = e.target?.result as string;
       };
@@ -103,82 +110,82 @@ export default function ImageUpload({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    if (!isDisabled) {
-      const files = e.dataTransfer.files;
-      if (files && files.length > 0) {
-        checkAuthAndProceed(() => processFile(files[0]));
-      }
+    const files = e.dataTransfer.files;
+    if (files && files.length > 0) {
+      checkAuthAndProceed(() => processFile(files[0]));
     }
   };
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    if (!isDisabled) {
-      const files = e.target.files;
-      if (files && files.length > 0) {
-        checkAuthAndProceed(() => processFile(files[0]));
-      }
+    const files = e.target.files;
+    if (files && files.length > 0) {
+      checkAuthAndProceed(() => processFile(files[0]));
     }
   };
 
   const handleCameraCapture = () => {
-    if (!isDisabled) {
-      checkAuthAndProceed(() => {
-        cameraInputRef.current?.click();
-      });
-    }
-  };
-
-  const handleFileUploadClick = () => {
-    if (!isDisabled) {
-      checkAuthAndProceed(() => {
-        fileInputRef.current?.click();
-      });
-    }
+    checkAuthAndProceed(() => {
+      cameraInputRef.current?.click();
+    });
   };
 
   return (
     <div className="space-y-4">
+      {/* Drag and Drop or File Upload Section */}
       <div
         className={`flex flex-col items-center justify-center w-full h-64 border-2 border-green-300 border-dashed rounded-lg cursor-pointer bg-gray-800 hover:bg-gray-700 transition duration-300 ${
           dragActive ? "bg-gray-700" : ""
-        } ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
-        onDragEnter={isDisabled ? undefined : handleDrag}
-        onDragLeave={isDisabled ? undefined : handleDrag}
-        onDragOver={isDisabled ? undefined : handleDrag}
-        onDrop={isDisabled ? undefined : handleDrop}
-        onClick={handleFileUploadClick}
+        }`}
+        onDragEnter={(e) => {
+          checkAuthAndProceed(() => handleDrag(e));
+        }}
+        onDragLeave={(e) => {
+          checkAuthAndProceed(() => handleDrag(e));
+        }}
+        onDragOver={(e) => {
+          checkAuthAndProceed(() => handleDrag(e));
+        }}
+        onDrop={(e) => {
+          checkAuthAndProceed(() => handleDrop(e));
+        }}
       >
-        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+        <label
+          htmlFor="file-upload"
+          className="flex flex-col items-center justify-center pt-5 pb-6 cursor-pointer"
+          onClick={(e) => {
+            e.preventDefault();
+            checkAuthAndProceed(() => {});
+          }}
+        >
           <Upload className="w-10 h-10 mb-3 text-green-400" />
           <p className="mb-2 text-sm text-green-400">
             <span className="font-semibold">Click to upload</span> or drag and
             drop
           </p>
-          <p className="text-xs text-green-500">PNG, JPG or GIF</p>
-        </div>
+          <p className="text-xs text-green-500">
+            PNG, JPG or GIF (MAX. 1MB, will be resized if larger)
+          </p>
+        </label>
       </div>
       <input
-        id="dropzone-file"
+        id="file-upload"
         type="file"
         className="hidden"
         onChange={handleChange}
-        ref={fileInputRef}
         accept="image/*"
-        disabled={isLoading || isDisabled}
+        disabled={isLoading}
       />
 
+      {/* Camera Capture Button */}
       <button
         onClick={handleCameraCapture}
-        className={`w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center ${
-          isDisabled ? "opacity-50 cursor-not-allowed" : ""
-        }`}
-        disabled={isLoading || isDisabled}
+        className="w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center"
+        disabled={isLoading}
       >
         <Camera className="w-5 h-5 mr-2" />
         Capture from Camera
       </button>
-
       <input
         type="file"
         accept="image/*"
@@ -186,7 +193,16 @@ export default function ImageUpload({
         className="hidden"
         ref={cameraInputRef}
         onChange={handleChange}
-        disabled={isLoading || isDisabled}
+        disabled={isLoading}
+      />
+
+      {/* Authentication Modal */}
+      <Modal
+        isOpen={isModalOpen}
+        onClose={handleModalClose}
+        title="Authentication Required"
+        message="You need to be logged in to perform this action."
+        type="error"
       />
     </div>
   );
