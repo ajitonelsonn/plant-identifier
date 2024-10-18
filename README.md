@@ -1,6 +1,6 @@
 # Plant Identifier
 
-**Plant Identifier** is an AI-powered web application that helps users identify plants from images using machine learning. With a user-friendly interface, it offers plant identification and care tips, making it perfect for both gardening enthusiasts and professionals.
+**Plant Identifier** is an AI-powered web application that identifies plants from images using LLMA 3.2 model. It provides users with plant identification and care tips, perfect for gardening enthusiasts and professionals.
 
 ## Video Demonstration
 
@@ -10,45 +10,45 @@ Check out our video demonstration to see Plant Identifier in action:
 
 Click on the image above to watch the video on Facebook.
 
-### Features Highlighted in the Video:
+### Features in the Video:
 
-✅ Register for an account
-✅ Log in securely
-✅ Identify plants with just a photo
-✅ Manage your account (including how to delete it if needed)
+- Account registration
+- Secure login
+- Plant identification with a photo
+- Account management (including account deletion)
 
 ## Live Demo
 
-Try out the live demo at [https://plantaitl.online/](https://plantaitl.online/)
+Try the live demo at [plantaitl.online](https://plantaitl.online/)
 
-To get started:
+**Getting Started**:
 
-1. Visit the site
-2. Register and verify your email
-3. Log in and begin identifying plants
+1. Visit the site.
+2. Register and verify your email.
+3. Log in to begin identifying plants.
 
 ## Key Features
 
-- **Image Upload**: Upload plant images for AI-powered identification.
-- **Plant Details**: View detailed information on identified plants.
-- **User Authentication**: Secure login with OTP email verification.
-- **Responsive Design**: Optimized for both desktop and mobile devices.
-- **Profile Management**: Save identified plants and manage your collection.
+- **Image Upload**: AI-based identification from plant images.
+- **Plant Details**: View detailed information and care tips.
+- **User Authentication**: OTP email verification for secure login.
+- **Responsive Design**: Accessible on desktop and mobile.
+- **Profile Management**: Save and manage your plant collection.
 
 ## How It Works
 
-1. **Sign Up**: Users register with OTP email verification.
-2. **Upload Image**: Upload or take a plant image.
-3. **AI Processing**: The TOGETHER API (Llama 3.2 model) analyzes the image.
-4. **Plant Identification**: Receive detailed plant information and care tips.
-5. **User Profiles**: Save and track identified plants.
+1. **Sign Up**: Register with OTP email verification.
+2. **Upload Image**: Upload or capture an image of a plant.
+3. **AI Processing**: Image analyzed via TOGETHER API (Llama 3.2 model).
+4. **Identification**: Get plant information and care tips.
+5. **Save Plants**: Manage identified plants in your profile.
 
 ## Technologies Used
 
-- **Frontend**: Next.js 14, React, TypeScript, Tailwind CSS
+- **Frontend**: Next.js, React, TypeScript, Tailwind CSS
 - **Backend**: Node.js, PostgreSQL
-- **Authentication**: JWT, OTP for email verification
-- **APIs**: TOGETHER API (Llama 3.2 model)
+- **Authentication**: JWT, OTP via email
+- **API**: TOGETHER API (Llama 3.2 model)
 - **Deployment**: Vercel
 
 ## Installation Guide
@@ -66,11 +66,15 @@ To get started:
    npm install
    ```
 
-3. Set environment variables by creating a `.env.local` file from the `.env.local_copy`.
+3. Set environment variables:
 
-4. Set up the PostgreSQL database by running `database_setup.sql`.
+   Create a `.env.local` file from `.env.local_copy`.
 
-5. Build and run the application:
+4. Set up the database:
+
+   Run `database_setup.sql` to initialize PostgreSQL.
+
+5. Build and run:
 
    ```bash
    npm run build
@@ -81,20 +85,25 @@ To get started:
 
 ## API Routes
 
-- `/api/check-auth`: Verifies user authentication.
-- `/api/check-availability`: Checks username/email availability.
-- `/api/generate-care-tips`: Generates plant care tips.
-- `/api/identify-plant`: Processes plant identification.
-- `/api/register`: Manages user registration and OTP verification.
-- `/api/profile`: Manages user profiles.
-- `/api/forgot-password`: For Forgot Password.
-- `/api/reset-password`: For reset password.
+- `/api/check-auth`: Verify user authentication.
+- `/api/check-availability`: Check username/email availability.
+- `/api/generate-care-tips`: Generate plant care tips.
+- `/api/identify-plant`: Identify plants.
+- `/api/register`: User registration and OTP verification.
+- `/api/profile`: Manage user profiles.
+- `/api/forgot-password`: Password reset requests.
+- `/api/reset-password`: Reset passwords.
+- `/api/change-password`: Change passwords.
+- `/api/login`: User login.
+- `/api/logout`: User logout.
+- `/api/send-otp`: Send OTP for verification.
+- `/api/plant-identifications`: Manage identified plants.
 
 ## Learn More
 
-- For the **System Architecture Diagram**, visit [this link](https://github.com/ajitonelsonn/plant-identifier/tree/main/diagram_system/System%20Architecture%20Diagram).
-- For the **Flow Chart**, visit [this link](https://github.com/ajitonelsonn/plant-identifier/tree/main/diagram_system/Application%20Flow).
+- **System Architecture Diagram**: [View here](https://github.com/ajitonelsonn/plant-identifier/tree/main/diagram_system/System%20Architecture%20Diagram).
+- **Flow Chart**: [View here](https://github.com/ajitonelsonn/plant-identifier/tree/main/diagram_system/Application%20Flow).
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
