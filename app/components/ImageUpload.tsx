@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
 import { Upload, Camera } from "lucide-react";
-import { useRouter } from "next/navigation";
 
 interface ImageUploadProps {
   onImageCapture: (file: File) => void;
@@ -15,7 +14,6 @@ export default function ImageUpload({
 }: ImageUploadProps) {
   const [dragActive, setDragActive] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
 
