@@ -318,12 +318,21 @@ export default function Profile() {
                 }
               />
             </div>
-            <button className="mt-8 bg-green-500 text-white px-6 py-2 rounded-full flex items-center hover:bg-green-600 transition duration-300">
-              <Link href="/edit-profile" className="flex items-center">
-                <Edit3 className="mr-2" size={18} />
-                Edit Profile
-              </Link>
-            </button>
+            <div className="mt-8 flex space-x-4">
+              <button className="bg-blue-500 text-white px-6 py-2 rounded-full flex items-center hover:bg-blue-600 transition duration-300">
+                <Link href="/change-password" className="flex items-center">
+                  <Edit3 className="mr-2" size={18} />
+                  Change Password
+                </Link>
+              </button>
+
+              <button className="bg-green-500 text-white px-6 py-2 rounded-full flex items-center hover:bg-green-600 transition duration-300">
+                <Link href="/edit-profile" className="flex items-center">
+                  <Edit3 className="mr-2" size={18} />
+                  Edit Profile
+                </Link>
+              </button>
+            </div>
           </div>
         </div>
 
