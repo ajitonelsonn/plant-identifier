@@ -22,7 +22,7 @@ const Modal: React.FC<ModalProps> = ({
   return (
     <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
       <div className="relative bg-white rounded-lg shadow-xl p-8 m-4 max-w-xs max-h-full text-center">
-        <h2 className="text-xl font-bold py-4">{title}</h2>
+        <h2 className="text-xl text-black font-bold py-4">{title}</h2>
         <p className="text-gray-700 mb-6">{message}</p>
         <button
           onClick={onClose}
