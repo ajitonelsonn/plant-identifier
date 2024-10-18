@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import Modal from "../components/Modal";
+import { User, Lock, Leaf, Loader2 } from "lucide-react";
 
 export default function Login() {
   const [username, setUsername] = useState("");
@@ -56,7 +56,7 @@ export default function Login() {
   };
 
   const loadUserData = async () => {
-    // Fetch any necessary user data here
+    // Simulate loading user data for better UX
     await new Promise((resolve) => setTimeout(resolve, 1000));
   };
 
@@ -65,117 +65,79 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-green-50">
-      <div className="bg-white rounded-xl shadow-xl overflow-hidden max-w-4xl w-full flex">
-        <div className="w-1/2 relative">
-          <Image
-            src="/plant-background.jpg"
-            alt="Plant background"
-            layout="fill"
-            objectFit="cover"
-          />
-          <div className="absolute inset-0 bg-green-900 bg-opacity-70 flex flex-col justify-center items-center text-white p-8">
-            <div className="text-4xl font-bold mb-4 flex items-center">
-              <Link
-                href="/"
-                className="text-2xl font-bold text-white flex items-center hover:text-green-200 transition duration-300"
-              >
-                <span className="mr-2">PLANTIDEN</span>
-                <svg
-                  className="w-8 h-8 ml-2"
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                >
-                  <path d="M7,17.5C7,16.12 8.12,15 9.5,15C10.88,15 12,16.12 12,17.5C12,18.88 10.88,20 9.5,20C8.12,20 7,18.88 7,17.5M16.5,15C17.88,15 19,16.12 19,17.5C19,18.88 17.88,20 16.5,20C15.12,20 14,18.88 14,17.5C14,16.12 15.12,15 16.5,15M16.5,3C19.58,3 22,5.42 22,8.5C22,11.58 19.58,14 16.5,14C13.42,14 11,11.58 11,8.5C11,5.42 13.42,3 16.5,3M7.5,3C10.58,3 13,5.42 13,8.5C13,11.58 10.58,14 7.5,14C4.42,14 2,11.58 2,8.5C2,5.42 4.42,3 7.5,3Z" />
-                </svg>
-              </Link>
-            </div>
-            <p className="text-center text-sm">
-              Identify and learn about plants with our AI-powered tool
-            </p>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-400 to-blue-500 p-4">
+      <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
+        <div className="flex items-center justify-center mb-8">
+          <Leaf className="h-12 w-auto text-green-600" />
+          <span className="ml-2 text-3xl font-bold text-green-600">
+            PLANTIDEN
+          </span>
+        </div>
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">Welcome Back</h2>
+        <p className="text-gray-600 mb-8">
+          Log in to your account to explore the world of plants
+        </p>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="relative">
+            <User className="absolute top-3 left-3 text-gray-400" size={20} />
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Username"
+              required
+            />
           </div>
-        </div>
-        <div className="w-1/2 p-8">
-          <h2 className="text-3xl font-semibold text-green-800 mb-2">
-            Welcome
-          </h2>
-          <p className="text-gray-600 mb-8">Log in to your account</p>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label htmlFor="username" className="block text-gray-700 mb-2">
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-gray-700 mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                required
-              />
-            </div>
-            <div className="flex justify-end">
-              <Link
-                href="/forgot-password"
-                className="text-sm text-green-600 hover:underline"
-              >
-                Forgot Password?
-              </Link>
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center"
-              disabled={isLoading}
+          <div className="relative">
+            <Lock className="absolute top-3 left-3 text-gray-400" size={20} />
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full p-3 pl-10 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+              placeholder="Password"
+              required
+            />
+          </div>
+          <div className="flex justify-between items-center">
+            <label className="flex items-center">
+              <input type="checkbox" className="form-checkbox text-green-500" />
+              <span className="ml-2 text-sm text-gray-600">Remember me</span>
+            </label>
+            <Link
+              href="/forgot-password"
+              className="text-sm text-green-600 hover:underline"
             >
-              {isLoading ? (
-                <>
-                  <svg
-                    className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    ></circle>
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    ></path>
-                  </svg>
-                  Logging in...
-                </>
-              ) : (
-                "Login"
-              )}
-            </button>
-          </form>
-          <p className="mt-8 text-center text-gray-600">
-            Don&apos;t have an account?{" "}
-            <Link href="/register" className="text-green-600 hover:underline">
-              Sign Up
+              Forgot Password?
             </Link>
-          </p>
-        </div>
+          </div>
+          <button
+            type="submit"
+            className="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="animate-spin mr-2" size={20} /> Logging
+                in...
+              </>
+            ) : (
+              "Login"
+            )}
+          </button>
+        </form>
+        <p className="mt-8 text-center text-gray-600">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/register"
+            className="text-green-600 hover:underline font-semibold"
+          >
+            Sign Up
+          </Link>
+        </p>
       </div>
       <Modal
         isOpen={modalInfo.isOpen}
