@@ -68,7 +68,7 @@ Try the live demo at [plantaitl.online](https://plantaitl.online/)
 
 3. Set environment variables:
 
-   Create a `.env.local` file from `.env.local_copy`.
+   Create a `.env.local` file from `.env.local_copy`. Click this for more about [.env.local](https://github.com/ajitonelsonn/plant-identifier/commit/f33b262bda43d8a31dd419988d03884fdc97d4b2#commitcomment-147938686)
 
 4. Set up the database:
 
