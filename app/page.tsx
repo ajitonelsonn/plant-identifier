@@ -102,7 +102,6 @@ export default function Home() {
             <ImageUpload
               onImageCapture={handleImageCapture}
               isLoading={isLoading}
-              isDisabled={!user}
             />
 
             {uploadedImage && (
