@@ -119,18 +119,6 @@ export default function ImageUpload({
     }
   };
 
-  const handleFileUploadClick = () => {
-    if (isLoggedIn) {
-      fileInputRef.current?.click();
-    }
-  };
-
-  const handleCameraCaptureClick = () => {
-    if (isLoggedIn) {
-      cameraInputRef.current?.click();
-    }
-  };
-
   return (
     <div className="space-y-4">
       {/* Drag and Drop or File Upload Section */}
@@ -142,8 +130,16 @@ export default function ImageUpload({
         onDragLeave={handleDrag}
         onDragOver={handleDrag}
         onDrop={handleDrop}
-        onClick={handleFileUploadClick}
       >
+        <input
+          id="file-upload"
+          type="file"
+          className="hidden"
+          ref={fileInputRef}
+          onChange={handleChange}
+          accept="image/*"
+          disabled={isLoading || !isLoggedIn}
+        />
         <label
           htmlFor="file-upload"
           className="flex flex-col items-center justify-center pt-5 pb-6 cursor-pointer"
@@ -158,19 +154,10 @@ export default function ImageUpload({
           </p>
         </label>
       </div>
-      <input
-        id="file-upload"
-        type="file"
-        className="hidden"
-        ref={fileInputRef}
-        onChange={handleChange}
-        accept="image/*"
-        disabled={isLoading || !isLoggedIn}
-      />
 
       {/* Camera Capture Button */}
       <button
-        onClick={handleCameraCaptureClick}
+        onClick={() => cameraInputRef.current?.click()}
         className={`w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition duration-300 flex items-center justify-center ${
           isLoading || !isLoggedIn ? "opacity-50 cursor-not-allowed" : ""
         }`}
