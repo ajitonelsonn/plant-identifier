@@ -1,5 +1,7 @@
-# Plant Identifier
+# 🏆 Winner of Monthly Hackathon 2024 - October 2024 Coding Challenge
+[View Challenge Details](https://earn.stackup.dev/learn/pathways/2024-monthly-hackathon-coding-challenges/skills/october-2024-monthly-coding-challenge/modules/october-2024-monthly-coding-challenges-showcase/tutorials/monthly-hackathon-2024-october-2024-coding-challenge-showcase)
 
+# Plant Identifier
 **Plant Identifier** is an AI-powered web application that identifies plants from images using LLMA 3.2 model. It provides users with plant identification and care tips, perfect for gardening enthusiasts and professionals.
 
 ## Video Demonstration
