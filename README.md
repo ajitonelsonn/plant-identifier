@@ -109,12 +109,6 @@ Try the live demo at [plantaitl.online](https://plantaitl.online/)
 - `/api/send-otp`: Send OTP for verification.
 - `/api/plant-identifications`: Manage identified plants.
 
-## Learn More . . .
-
-- **Plant Identifier - System Architecture Diagram**: [View here](https://github.com/ajitonelsonn/plant-identifier/tree/main/diagram_system/System%20Architecture%20Diagram).
-- **Plant Identifier - Flow Chart**: [View here](https://github.com/ajitonelsonn/plant-identifier/tree/main/diagram_system/Application%20Flow).
-- **Plant Identifier Database**: [View here](https://github.com/ajitonelsonn/plant-identifier/tree/54b32a979b8a08cd180b631ac488d394c955920d/diagram_system/Plant%20Identifier%20Database).
-
 ## License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
